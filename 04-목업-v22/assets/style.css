@@ -299,7 +299,11 @@ body.dark .logo { color: var(--paper); }
   .gnb.menu-open { background: var(--paper); }
   .gnb.menu-open nav { display: flex; position: fixed; inset: 72px 0 0; background: var(--paper);
     flex-direction: column; padding: 36px 28px; gap: 4px; border: 0; border-radius: 0; backdrop-filter: none; }
-  .gnb.menu-open nav a { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; padding: 14px 0; opacity: 1; }
+  /* v22: 다크 페이지(콘텐츠 탭 등)에서 열어도 밝은 메뉴 배경 위 글자가 보이도록 색 고정 */
+  .gnb.menu-open nav a { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; padding: 14px 0; opacity: 1; color: var(--ink); }
+  .gnb.menu-open nav a.active { background: transparent; color: var(--ink); }
+  .gnb.menu-open nav a.active::after { content: " ✳"; background: none; color: var(--lime); -webkit-text-stroke: 1px var(--ink); }
+  .gnb.menu-open .logo, .gnb.menu-open .gnb__burger { color: var(--ink); }
   .gnb.menu-open .btn { display: inline-flex; position: fixed; left: 28px; right: 28px; bottom: 34px; justify-content: center; }
 }
 
