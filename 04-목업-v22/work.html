@@ -114,7 +114,22 @@
 .bld-note { margin: 30px 0 0; font-family: var(--mono); font-size: 12px; color: var(--muted-2); letter-spacing: .04em; }
 .bld-note b { color: var(--muted); font-weight: 700; }
 @media (max-width: 1000px) { .bld__grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 620px) { .bld__grid { grid-template-columns: 1fr; } .bcard .slot { aspect-ratio: 4/4.4; } }
+/* v22: 모바일 — 빌더 리스트를 2행 가로 스와이프 캐러셀로 (한 화면 2×2, 옆으로 넘김) */
+@media (max-width: 640px) {
+  .bld__grid { display: grid; grid-template-columns: none; grid-auto-flow: column;
+    grid-template-rows: repeat(2, auto); grid-auto-columns: 44vw; gap: 18px 14px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 20px;
+    margin: 0 -20px; padding: 0 20px 8px; scrollbar-width: none; }
+  .bld__grid::-webkit-scrollbar { display: none; }
+  .bcard { scroll-snap-align: start; min-width: 0; }
+  .bcard .slot { aspect-ratio: 4/4.6; border-radius: 16px; }
+  .bcard .meta { padding: 9px 2px 0; }
+  .bcard b { font-size: 15px; }
+  .bcard .role { font-size: 11.5px; margin: 2px 0 0; }
+  .bcard p, .bcard .stk { display: none; }
+  .bcard .lv { top: 9px; left: 9px; font-size: 9px; padding: 4px 8px; letter-spacing: .12em; }
+  .bcard .ct { padding: 34px 12px 9px; font-size: 9.5px; }
+}
 
 /* ── 포트폴리오 그리드 (plus-ex 리듬) ── */
 .pxg { display: grid; grid-template-columns: repeat(12, 1fr); gap: 22px; }
@@ -134,7 +149,21 @@
 .pxg .wcard:nth-child(5) .slot, .pxg .wcard:nth-child(6) .slot { aspect-ratio: 16/11; }
 .pxg .wcard:nth-child(7) .slot, .pxg .wcard:nth-child(8) .slot, .pxg .wcard:nth-child(9) .slot { aspect-ratio: 16/12; }
 .pxg .wcard:nth-child(1) h3, .pxg .wcard:nth-child(4) h3 { font-size: 25px; }
-@media (max-width: 900px) { .pxg .wcard { grid-column: 1 / -1 !important; margin-top: 0 !important; } }
+/* v22: 모바일 — 포트폴리오 2단 그리드 (스크롤 절반, 필터와 무관하게 안정) + 오버레이 태그 배지 */
+@media (max-width: 900px) {
+  .pxg { grid-template-columns: 1fr 1fr; gap: 24px 14px; }
+  .pxg .wcard { grid-column: auto !important; margin-top: 0 !important; min-width: 0; }
+  .pxg .wcard:nth-child(n) .slot { aspect-ratio: 4/3; }
+  .pxg .wcard:nth-child(n) h3 { font-size: 15.5px; margin: 0 0 3px; }
+  .pxg .wcard .bf__bar { display: none; }
+  .pxg .wcard .meta { position: relative; padding: 12px 2px 0; }
+  .pxg .wcard .mrow { position: absolute; left: 8px; right: 8px; bottom: calc(100% + 10px); margin: 0; z-index: 4; }
+  .pxg .wcard .mrow .tag { font-size: 10px; padding: 4px 9px; box-shadow: 0 6px 14px rgba(14,14,12,.28); }
+  .pxg .wcard .mrow .yr { display: none; }
+  .pxg .wcard p { font-size: 12.5px; line-height: 1.5;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .pxg .wcard .builders { font-size: 11px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
 .list-note { margin: 48px 0 0; text-align: center; }
 .head-cnt { font-family: var(--mono); font-size: 13px; letter-spacing: .16em; color: var(--muted-2); }
 .slot .cover { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
