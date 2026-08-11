@@ -296,8 +296,10 @@ body.dark .logo { color: var(--paper); }
 @media (max-width: 768px) {
   .gnb nav, .gnb .btn { display: none; }
   .gnb__burger { display: block; }
-  /* v22: backdrop-filter가 fixed 메뉴의 기준 박스를 헤더로 바꿔 배경판이 무너지는 버그 방지 */
-  .gnb.menu-open { background: var(--paper); backdrop-filter: none; }
+  /* v22: backdrop-filter가 fixed 메뉴의 기준 박스를 헤더로 바꿔 배경판이 무너지는 버그 방지
+     + 헤더 배경 0.25s 페이드가 메뉴 열림을 늦게 보이게 해서 전환 즉시 적용 */
+  .gnb.menu-open { background: var(--paper); backdrop-filter: none; transition: none; }
+  .gnb.menu-open nav, .gnb.menu-open nav a { transition: none; }
   body.no-scroll { overflow: hidden; }
   .gnb.menu-open nav { display: flex; position: fixed; inset: 72px 0 0; background: var(--paper);
     flex-direction: column; padding: 36px 28px; gap: 4px; border: 0; border-radius: 0; backdrop-filter: none; }
