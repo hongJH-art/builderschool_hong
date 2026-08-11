@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 빌더 그룹 — 바이브 코딩 외주 | 목업 v4 P-01</title>
+<meta name="description" content="AI 시대에 최적화된 개발자가 바이브 코딩으로 외주를 해드립니다. 검증된 빌더 맞춤 매칭.">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* ============================================================
+   P-01 홈 v4 — v3 대비:
+   · 히어로 카루셀 → 우측 대각선 스트림 (2열 상하 무한 흐름)
+   · 킥커·프로세스 문구 제거 — 헤드라인이 첫 문장
+   · 섹션 헤더 반복 패턴 해체 (아이브로 통일 → 섹션마다 다른 처리)
+   ============================================================ */
+
+/* ---- S1 Hero: 좌 타이포 / 우 대각선 스트림 ---- */
+.hero { position: relative; min-height: 100vh; display: flex; align-items: center;
+  overflow: hidden; border-bottom: 1px solid var(--line); padding: 0; }
+.hero__bg { position: absolute; inset: -22%; z-index: 0; filter: blur(70px); opacity: .5;
+  background:
+    radial-gradient(36% 40% at 20% 28%, var(--lime), transparent 68%),
+    radial-gradient(30% 34% at 80% 70%, #E9E4CF, transparent 70%),
+    radial-gradient(24% 28% at 62% 16%, #FFE9D2, transparent 70%);
+  animation: drift 28s ease-in-out infinite alternate; }
+@keyframes drift {
+  0%   { transform: translate(0,0) scale(1); }
+  50%  { transform: translate(4%, -3%) scale(1.06); }
+  100% { transform: translate(-3%, 4%) scale(1.02); } }
+.hero__in { position: relative; z-index: 2; padding: 100px 0; width: 100%; }
+.hero h1 { margin: 0 0 26px; font-size: clamp(46px, 6.6vw, 90px); font-weight: 800; line-height: 1.02;
+  letter-spacing: -0.05em; color: var(--ink); }
+.hero h1 mark { background: var(--lime); padding: 0 .08em; border-radius: 10px;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.hero p { margin: 0 0 40px; font-size: clamp(16px, 1.8vw, 18.5px); color: var(--muted); max-width: 42ch;
+  line-height: 1.75; word-break: keep-all; }
+.st { opacity: 0; transform: translateY(28px); animation: stIn .85s var(--ease-in) forwards; }
+.st1 { animation-delay: .05s; } .st2 { animation-delay: .18s; } .st3 { animation-delay: .31s; }
+@keyframes stIn { to { opacity: 1; transform: none; } }
+.hero__scroll { position: absolute; bottom: 28px; left: 28px; z-index: 2;
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .26em; color: var(--muted-2); }
+.hero__scroll::after { content: ""; display: block; width: 1px; height: 36px; margin: 9px 0 0 2px;
+  background: linear-gradient(var(--ink), transparent); animation: scrollHint 1.9s ease-in-out infinite; }
+@keyframes scrollHint { 0%,100% { transform: scaleY(.35); transform-origin: top; } 50% { transform: scaleY(1); } }
+
+/* 대각선 스트림 — 실물이 우상단에서 흘러내려온다 */
+.streamwrap { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(102deg, transparent 44%, #000 60%);
+          mask-image: linear-gradient(102deg, transparent 44%, #000 60%); }
+.stream { position: absolute; top: -8%; bottom: -14%; right: max(-60px, calc((100vw - 1460px) / 2));
+  width: min(45vw, 620px); transform: rotate(14deg); display: flex; gap: 22px; }
+.stream .col { flex: 1; overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 40px, #000 400px, #000 calc(100% - 200px), transparent);
+          mask-image: linear-gradient(180deg, transparent 40px, #000 400px, #000 calc(100% - 200px), transparent); }
+.stream .col-in { display: flex; flex-direction: column; gap: 22px; animation: flowUp 46s linear infinite; }
+.stream .col--rev .col-in { animation-duration: 58s; animation-direction: reverse; }
+@keyframes flowUp { to { transform: translateY(-50%); } }
+.sc { position: relative; width: 100%; border-radius: 14px; overflow: hidden; background: var(--ink); flex: none;
+  box-shadow: 0 18px 44px rgba(14,14,12,.16); }
+.sc .lb { position: absolute; left: 12px; bottom: 9px; z-index: 2; font-family: var(--mono);
+  font-size: 8.5px; letter-spacing: .12em; color: rgba(244,241,234,.6); text-transform: uppercase; }
+@media (prefers-reduced-motion: reduce) { .stream .col-in { animation: none; } }
+@media (max-width: 960px) { .streamwrap { display: none; } }
+
+/* ---- 섹션 헤더 변주 (반복 패턴 해체) ---- */
+.lbl-mono { font-family: var(--mono); font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--muted-2); display: block; margin-bottom: 18px; }
+.tag--lime { background: var(--lime); color: var(--ink); }
+
+/* ---- S2 문제 제기: 좌 고정 + 스크롤 연동 (헤더: 라벨 없이 헤드라인부터) ---- */
+.s2 { border-bottom: 1px solid var(--line); padding: 0; }
+.s2__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start; }
+.s2__left { position: sticky; top: 72px; padding: 130px 0; }
+.s2__left h2 { font-size: clamp(32px, 4.4vw, 52px); }
+.s2__left .note { margin-top: 20px; color: var(--muted); font-size: 15px; max-width: 38ch; word-break: keep-all; }
+.s2__count { margin-top: 44px; font-family: var(--mono); font-size: 11px; letter-spacing: .2em; color: var(--muted-2); }
+.s2__count b { color: var(--ink); font-weight: 700; }
+.s2__right { padding: 130px 0; display: flex; flex-direction: column; gap: 22vh; }
+.warn { position: relative; border: 1px solid var(--line); border-radius: 22px; padding: 36px 34px 34px;
+  background: var(--paper-2); opacity: .32; transform: scale(.975);
+  transition: opacity .5s var(--ease-in), transform .5s var(--ease-in), border-color .5s, background .5s; }
+.warn::before { content: ""; position: absolute; left: -1px; top: 26px; bottom: 26px; width: 3px;
+  border-radius: 0 3px 3px 0; background: var(--lime); opacity: 0; transition: opacity .45s; }
+.warn.active { opacity: 1; transform: none; border-color: var(--ink); background: var(--paper); }
+.warn.active::before { opacity: 1; }
+.warn .no { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; color: var(--muted-2); }
+.warn h3 { margin: 12px 0 10px; font-size: 22px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.35; }
+.warn p { margin: 0; font-size: 14.5px; color: var(--muted); line-height: 1.7; word-break: keep-all; }
+.warn.active .no { color: var(--ink); }
+
+/* ---- S3 일하는 방식 (헤더: 플레인 모노 라벨) ---- */
+.s3 { padding: 0; border-bottom: 1px solid var(--line); background: var(--ink); color: var(--paper); height: 100%; }
+.s3__sticky { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.s3__outer { height: 340vh; }
+.s3__head { padding: 0 28px; max-width: var(--maxw); margin: 0 auto 44px; width: 100%;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+.s3__head .lbl-mono { color: var(--d-mut2); }
+.s3__head h2 { color: var(--paper); margin: 0; }
+.s3__cnt { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; color: var(--d-mut2);
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+.s3__cnt b { color: var(--lime); font-weight: 700; }
+.s3__rail { display: flex; gap: 22px; padding: 0 max(28px, calc((100vw - 1200px)/2)); will-change: transform; }
+.step { flex: 0 0 min(430px, 78vw); border: 1px solid var(--d-line); border-radius: 26px; padding: 38px 36px 34px;
+  background: rgba(244,241,234,.035); min-height: 340px; display: flex; flex-direction: column; transition: border-color var(--hover); }
+.step:hover { border-color: rgba(244,241,234,.3); }
+.step .no { font-family: var(--mono); font-size: 38px; font-weight: 400; color: var(--lime);
+  letter-spacing: -0.02em; line-height: 1; }
+.step h3 { margin: 22px 0 10px; font-size: 27px; font-weight: 800; letter-spacing: -0.035em; }
+.step p { margin: 0; font-size: 14.5px; color: var(--d-mut); line-height: 1.75; word-break: keep-all; }
+.step .out { margin-top: auto; padding-top: 26px; border-top: 1px dashed var(--d-line2);
+  font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--d-mut2); }
+.s3__bar { height: 2px; background: var(--d-line2); margin: 46px auto 0; max-width: var(--maxw); width: calc(100% - 56px); }
+.s3__bar i { display: block; height: 100%; width: 0; background: var(--lime); transition: width .1s linear; }
+
+/* ---- S4 검증 체계 (헤더: 라임 태그) ---- */
+.s4 .vrow { display: grid; grid-template-columns: 92px 300px 1fr; gap: 34px; align-items: baseline;
+  padding: 26px 8px; border-bottom: 1px solid var(--line); }
+.s4 .vrow:first-of-type { border-top: 1px solid var(--line-2); }
+.s4 .vrow .no { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--muted-2); }
+.s4 .vrow h3 { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.4; }
+.s4 .vrow p { margin: 0; font-size: 14.5px; color: var(--muted); line-height: 1.7; max-width: 52ch; word-break: keep-all; }
+.s4 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 40px 0 0;
+  border: 1px solid var(--line-2); border-radius: 18px; overflow: hidden; background: var(--paper-2); }
+.s4 .stat { padding: 26px 22px 22px; border-left: 1px solid var(--line); }
+.s4 .stat:first-child { border-left: 0; }
+.s4 .stat b { display: block; font-family: var(--mono); font-size: 32px; font-weight: 700;
+  letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.s4 .stat b sub { font-size: .45em; vertical-align: baseline; color: var(--muted); font-weight: 500; }
+.s4 .stat span { display: block; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+.s4 .logos { margin-top: 16px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.s4 .quiet { margin-top: 22px; font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: var(--muted-2); }
+@media (max-width: 900px){ .s4 .vrow { grid-template-columns: 60px 1fr; } .s4 .vrow p { grid-column: 2; }
+  .s4 .stats { grid-template-columns: 1fr 1fr; } .s4 .stat:nth-child(3) { border-left: 0; }
+  .s4 .stat { border-top: 1px solid var(--line); } .s4 .stat:nth-child(-n+2) { border-top: 0; }
+  .s4 .logos { grid-template-columns: repeat(3, 1fr); } }
+
+/* ---- S5 맞춤 매칭 (헤더: 헤드라인만) ---- */
+.s5 { background: var(--paper-3); border-block: 1px solid var(--line); }
+.mcard { position: relative; border-radius: 24px; overflow: hidden; cursor: pointer; min-height: 380px;
+  display: flex; flex-direction: column; justify-content: flex-end; color: var(--paper); }
+.mcard .bg { position: absolute; inset: 0; transition: transform .6s var(--ease-in), filter .5s; }
+.mcard:hover .bg, .mcard.open .bg { transform: scale(1.06); filter: blur(10px) brightness(.55); }
+.mcard .shade { position: absolute; inset: 0; background: linear-gradient(200deg, transparent 40%, rgba(0,0,0,.62)); }
+.mcard .in { position: relative; z-index: 2; padding: 30px 32px; }
+.mcard .k { font-family: var(--mono); font-size: 9.5px; letter-spacing: .2em; color: rgba(244,241,234,.55);
+  text-transform: uppercase; display: block; margin-bottom: 12px; }
+.mcard h3 { margin: 0 0 6px; font-size: 24px; font-weight: 800; letter-spacing: -0.035em; }
+.mcard .sub { font-size: 13.5px; color: rgba(244,241,234,.6); margin: 0; }
+.mcard .detail { max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height .45s var(--ease-in), opacity .35s, margin .35s; margin-top: 0; }
+.mcard:hover .detail, .mcard.open .detail { max-height: 180px; opacity: 1; margin-top: 16px; }
+.mcard .detail p { margin: 0; font-size: 13.5px; color: rgba(244,241,234,.8); line-height: 1.7; word-break: keep-all; }
+.mcard .detail .who { display: block; margin-top: 12px; font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: .12em; color: var(--lime); text-transform: uppercase; }
+.mcard .plus { position: absolute; top: 24px; right: 24px; z-index: 2; width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(244,241,234,.4); display: grid; place-items: center; font-size: 17px; transition: .3s var(--ease-in); }
+.mcard:hover .plus, .mcard.open .plus { background: var(--lime); color: var(--ink); border-color: var(--lime); transform: rotate(45deg); }
+
+/* ---- S6 Work 프리뷰 ---- */
+.wg { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+.wg .wcard:nth-child(1) { grid-column: span 7; }
+.wg .wcard:nth-child(2) { grid-column: span 5; align-self: end; }
+.wg .wcard:nth-child(3) { grid-column: 3 / span 5; }
+.wg .wcard:nth-child(1) .slot { aspect-ratio: 16/11; }
+.wg .wcard:nth-child(2) .slot { aspect-ratio: 16/12; }
+.wg .wcard:nth-child(3) .slot { aspect-ratio: 16/9; }
+.wg .wcard:nth-child(1) h3 { font-size: 24px; }
+@media (max-width: 900px) { .wg .wcard { grid-column: 1 / -1 !important; } }
+.wcard .par { position: absolute; inset: -12% 0; will-change: transform;
+  background: radial-gradient(70% 60% at 70% 30%, rgba(216,255,61,.12), transparent 60%); pointer-events: none; z-index: 3; }
+
+/* ---- S7 Insight 프리뷰 ---- */
+.s7 .irow { display: grid; grid-template-columns: 150px 1fr auto; gap: 26px; align-items: baseline;
+  padding: 26px 8px; border-bottom: 1px solid var(--line); text-decoration: none;
+  transition: background var(--hover), padding-left var(--hover); }
+.s7 .irow:first-of-type { border-top: 1px solid var(--line-2); }
+.s7 .irow:hover { background: var(--paper-2); padding-left: 18px; }
+.s7 .irow .cat { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--muted-2); text-transform: uppercase; }
+.s7 .irow .t { font-size: 19px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.45; }
+.s7 .irow .d { font-family: var(--mono); font-size: 11px; color: var(--muted-2); font-variant-numeric: tabular-nums; }
+
+/* ---- S8 콘텐츠·유튜브 ---- */
+.s8 { background: var(--ink); color: var(--paper); border-block: 1px solid var(--line); }
+.s8 .lbl-mono { color: var(--d-mut2); }
+.s8 h2 { color: var(--paper); } .s8 .t-lead { color: var(--d-mut); }
+.s8 .more-link { color: var(--lime); }
+.vgrid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; }
+.vcell { position: relative; border-radius: 22px; overflow: hidden; cursor: pointer; background: #17170f; aspect-ratio: 16/9;
+  transition: transform .4s var(--ease-in); }
+.vcell:hover { transform: scale(1.018); }
+.vcell .dur { position: absolute; top: 16px; right: 16px; z-index: 3; font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: .1em; background: rgba(0,0,0,.55); color: rgba(244,241,234,.8); padding: 5px 10px; border-radius: 999px; }
+.vcell .play { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; }
+.vcell .play i { width: 66px; height: 66px; border-radius: 50%; background: var(--lime); display: grid; place-items: center;
+  color: var(--ink); font-size: 19px; transition: transform .35s var(--ease-in); box-shadow: 0 12px 40px rgba(216,255,61,.25); }
+.vcell:hover .play i { transform: scale(1.14); }
+.vcell .cap { position: absolute; left: 22px; bottom: 18px; right: 22px; z-index: 3; }
+.vcell .cap b { display: block; font-size: 17px; letter-spacing: -0.025em; font-weight: 700; }
+.vcell .cap span { font-family: var(--mono); font-size: 9.5px; color: var(--d-mut); letter-spacing: .12em; text-transform: uppercase; }
+.vside { display: grid; gap: 20px; }
+.vside .vcell { aspect-ratio: auto; }
+.expand-ov { position: fixed; z-index: 90; border-radius: 22px; background: var(--lime); pointer-events: none;
+  transition: all .5s var(--ease-spread); opacity: 0; }
+.expand-ov.go { border-radius: 0; opacity: 1; }
+
+/* ---- S9 FAQ ---- */
+.s9 .topics { display: inline-flex; background: var(--paper-3); border-radius: 999px; padding: 5px; gap: 2px; margin-bottom: 40px; }
+.s9 .topic { border: 0; background: transparent; padding: 11px 26px; border-radius: 999px; font-family: var(--sans);
+  font-size: 15px; font-weight: 600; color: var(--muted); cursor: pointer; transition: var(--hover); }
+.s9 .topic[aria-selected="true"] { background: var(--ink); color: var(--paper); font-weight: 700; }
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-item:first-of-type { border-top: 1px solid var(--line-2); }
+.faq-q { width: 100%; text-align: left; background: none; border: 0; font-family: var(--sans); cursor: pointer;
+  padding: 26px 48px 26px 8px; font-size: 18.5px; font-weight: 700; letter-spacing: -0.025em; color: var(--ink); position: relative; }
+.faq-q::after { content: "+"; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: 21px; font-weight: 400; color: var(--muted-2); transition: transform .3s var(--ease-in), color .3s; }
+.faq-q[aria-expanded="true"]::after { transform: translateY(-50%) rotate(45deg); color: var(--ink); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height .4s var(--ease-in); }
+.faq-a p { margin: 0; padding: 0 8px 28px; color: var(--muted); font-size: 15px; line-height: 1.8; max-width: 64ch; word-break: keep-all; }
+.s9 .url-demo { margin-top: 24px; font-family: var(--mono); font-size: 10.5px; color: var(--muted-2); letter-spacing: .05em; }
+.s9 .url-demo b { color: var(--ink); }
+
+/* ---- S10 최종 CTA ---- */
+.s10 { text-align: center; }
+.s10 .k { font-family: var(--mono); font-size: 10px; letter-spacing: .26em; color: var(--muted-2);
+  text-transform: uppercase; display: block; margin-bottom: 24px; }
+.s10 h2 { font-size: clamp(38px, 5.8vw, 72px); margin-bottom: 16px; }
+.s10 p { color: var(--muted); margin: 0 0 42px; font-size: 16.5px; }
+
+/* ---- 모바일 ---- */
+@media (max-width: 900px) {
+  .s2__grid { grid-template-columns: 1fr; gap: 0; }
+  .s2__left { position: static; padding: 72px 0 8px; }
+  .s2__count { display: none; }
+  .s2__right { padding: 24px 0 72px; gap: 20px; }
+  .warn { opacity: 1; transform: none; }
+  .warn::before { opacity: 1; }
+  .s3__outer { height: auto; }
+  .s3__sticky { position: static; height: auto; padding: 72px 0; }
+  .s3__rail { overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; }
+  .step { scroll-snap-align: start; }
+  .s3__bar, .s3__cnt { display: none; }
+  .vgrid { grid-template-columns: 1fr; }
+  .s7 .irow { grid-template-columns: 1fr; gap: 5px; }
+  .mcard { min-height: 300px; }
+  .mcard .detail { max-height: none; opacity: 1; margin-top: 14px; display: none; }
+  .mcard.open .detail { display: block; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문 바로가기</a>
+
+<header class="gnb">
+  <div class="gnb__in">
+    <a class="logo" href="index.html"><i></i>AI 빌더 그룹 <small>(가제·Q1)</small></a>
+    <button class="gnb__burger" aria-label="메뉴">☰</button>
+    <nav>
+      <a href="work.html">Work</a>
+      <a href="insight.html">Insight</a>
+      <a href="content.html">콘텐츠</a>
+    </nav>
+    <a class="btn btn--ink btn--sm" href="contact.html" data-track="cta_click" data-location="gnb">문의하기</a>
+  </div>
+</header>
+
+<main id="main" style="padding-top:0">
+
+<!-- ===== S1 Hero — 좌 타이포 / 우 대각선 실물 스트림 ===== -->
+<section class="hero">
+  <div class="hero__bg" aria-hidden="true"></div>
+
+  <!-- 대각선 스트림: 실제 프로젝트 화면이 우상단에서 흘러내려온다 -->
+  <div class="streamwrap" aria-hidden="true"><div class="stream">
+    <div class="col"><div class="col-in">
+      <!-- 열 1 · 세트 A -->
+      <div class="sc slot" style="height:172px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">consult-bot.app</span></div>
+          <div class="bf__body"><div class="row"><div class="bl" style="width:34%;height:8px"></div></div>
+            <div class="bl" style="width:70%;height:14px"></div><div class="bl bl--lime" style="width:26%;height:8px"></div>
+            <div class="row" style="margin-top:auto"><div class="bl" style="flex:1;height:30px"></div><div class="bl" style="flex:1;height:30px"></div></div></div></div>
+        <span class="lb">W—001 · AI Service</span>
+        <div class="slot__spec"><b>Asset — Hero Stream</b><span>실제 프로젝트 스크린샷 (브라우저 프레임)</span><em>560×420px @2x</em></div>
+      </div>
+      <div class="sc slot" style="height:210px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">cms.studio.io</span></div>
+          <div class="bf__body"><div class="row" style="height:100%"><div style="width:52px;display:flex;flex-direction:column;gap:5px"><div class="bl" style="height:9px"></div><div class="bl bl--lime" style="height:9px"></div><div class="bl" style="height:9px"></div><div class="bl" style="height:9px"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div class="bl" style="height:12px;width:56%"></div><div class="bl" style="flex:1"></div></div></div></div></div>
+        <span class="lb">W—003 · Platform</span>
+      </div>
+      <div class="sc slot" style="height:150px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">docs-ai.internal</span></div>
+          <div class="bf__body"><div class="row"><div class="bl bl--lime" style="width:24%;height:9px"></div><div class="bl" style="width:20%;height:9px"></div></div>
+            <div class="bl" style="width:82%;height:12px"></div><div class="bl" style="width:74%;height:12px"></div><div class="bl" style="width:60%;height:12px"></div></div></div>
+        <span class="lb">W—005 · AI Service</span>
+      </div>
+      <div class="sc slot" style="height:186px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">brand-landing.kr</span></div>
+          <div class="bf__body"><div class="bl bl--soft" style="width:100%;height:52px;border-radius:8px"></div>
+            <div class="row"><div class="bl" style="flex:2;height:9px"></div><div class="bl" style="flex:1;height:9px"></div></div>
+            <div class="row" style="margin-top:auto"><div class="bl" style="flex:1;height:22px"></div><div class="bl bl--lime" style="width:56px;height:22px;border-radius:999px"></div></div></div></div>
+        <span class="lb">W—002 · Landing</span>
+      </div>
+      <!-- 열 1 · 세트 A 반복 (무한 루프) -->
+      <div class="sc slot" style="height:172px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">consult-bot.app</span></div>
+          <div class="bf__body"><div class="row"><div class="bl" style="width:34%;height:8px"></div></div>
+            <div class="bl" style="width:70%;height:14px"></div><div class="bl bl--lime" style="width:26%;height:8px"></div>
+            <div class="row" style="margin-top:auto"><div class="bl" style="flex:1;height:30px"></div><div class="bl" style="flex:1;height:30px"></div></div></div></div>
+        <span class="lb">W—001 · AI Service</span>
+      </div>
+      <div class="sc slot" style="height:210px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">cms.studio.io</span></div>
+          <div class="bf__body"><div class="row" style="height:100%"><div style="width:52px;display:flex;flex-direction:column;gap:5px"><div class="bl" style="height:9px"></div><div class="bl bl--lime" style="height:9px"></div><div class="bl" style="height:9px"></div><div class="bl" style="height:9px"></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div class="bl" style="height:12px;width:56%"></div><div class="bl" style="flex:1"></div></div></div></div></div>
+        <span class="lb">W—003 · Platform</span>
+      </div>
+      <div class="sc slot" style="height:150px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">docs-ai.internal</span></div>
+          <div class="bf__body"><div class="row"><div class="bl bl--lime" style="width:24%;height:9px"></div><div class="bl" style="width:20%;height:9px"></div></div>
+            <div class="bl" style="width:82%;height:12px"></div><div class="bl" style="width:74%;height:12px"></div><div class="bl" style="width:60%;height:12px"></div></div></div>
+        <span class="lb">W—005 · AI Service</span>
+      </div>
+      <div class="sc slot" style="height:186px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">brand-landing.kr</span></div>
+          <div class="bf__body"><div class="bl bl--soft" style="width:100%;height:52px;border-radius:8px"></div>
+            <div class="row"><div class="bl" style="flex:2;height:9px"></div><div class="bl" style="flex:1;height:9px"></div></div>
+            <div class="row" style="margin-top:auto"><div class="bl" style="flex:1;height:22px"></div><div class="bl bl--lime" style="width:56px;height:22px;border-radius:999px"></div></div></div></div>
+        <span class="lb">W—002 · Landing</span>
+      </div>
+    </div></div>
+    <div class="col col--rev"><div class="col-in">
+      <!-- 열 2 · 세트 B (역방향 흐름) -->
+      <div class="sc slot" style="height:196px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">booking-sys.kr</span></div>
+          <div class="bf__body"><div class="row"><div class="bl" style="flex:1;height:58px"></div><div class="bl" style="flex:1;height:58px"></div><div class="bl bl--soft" style="flex:1;height:58px"></div></div>
+            <div class="bl" style="width:48%;height:9px;margin-top:auto"></div></div></div>
+        <span class="lb">W—006 · Platform</span>
+      </div>
+      <div class="sc slot" style="height:156px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">edu-service.co.kr</span></div>
+          <div class="bf__body"><div class="bl" style="width:64%;height:15px"></div><div class="bl" style="width:40%;height:9px"></div>
+            <div class="row" style="margin-top:auto"><div class="bl" style="flex:1;height:30px"></div><div class="bl bl--soft" style="flex:1;height:30px"></div></div></div></div>
+        <span class="lb">W—004 · Landing</span>
+      </div>
+      <div class="sc slot" style="height:214px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">consult-bot.app/chat</span></div>
+          <div class="bf__body"><div class="bl" style="width:44%;height:15px;border-radius:9px 9px 9px 3px"></div>
+            <div class="bl bl--soft" style="width:56%;height:22px;border-radius:9px 9px 3px 9px;margin-left:auto"></div>
+            <div class="bl" style="width:48%;height:18px;border-radius:9px 9px 9px 3px"></div>
+            <div class="row" style="margin-top:auto"><div class="bl" style="flex:1;height:16px;border-radius:999px"></div><div class="bl bl--lime" style="width:36px;height:16px;border-radius:999px"></div></div></div></div>
+        <span class="lb">Chat Flow</span>
+      </div>
+      <div class="sc slot" style="height:164px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">console — 지표</span></div>
+          <div class="bf__body"><div class="row"><div class="bl bl--lime" style="flex:1;height:30px"></div><div class="bl" style="flex:1;height:30px"></div></div>
+            <div class="bl" style="width:100%;height:44px;margin-top:auto"></div></div></div>
+        <span class="lb">Metrics</span>
+      </div>
+      <!-- 열 2 · 세트 B 반복 -->
+      <div class="sc slot" style="height:196px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">booking-sys.kr</span></div>
+          <div class="bf__body"><div class="row"><div class="bl" style="flex:1;height:58px"></div><div class="bl" style="flex:1;height:58px"></div><div class="bl bl--soft" style="flex:1;height:58px"></div></div>
+            <div class="bl" style="width:48%;height:9px;margin-top:auto"></div></div></div>
+        <span class="lb">W—006 · Platform</span>
+      </div>
+      <div class="sc slot" style="height:156px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">edu-service.co.kr</span></div>
+          <div class="bf__body"><div class="bl" style="width:64%;height:15px"></div><div class="bl" style="width:40%;height:9px"></div>
+            <div class="row" style="margin-top:auto"><div class="bl" style="flex:1;height:30px"></div><div class="bl bl--soft" style="flex:1;height:30px"></div></div></div></div>
+        <span class="lb">W—004 · Landing</span>
+      </div>
+      <div class="sc slot" style="height:214px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">consult-bot.app/chat</span></div>
+          <div class="bf__body"><div class="bl" style="width:44%;height:15px;border-radius:9px 9px 9px 3px"></div>
+            <div class="bl bl--soft" style="width:56%;height:22px;border-radius:9px 9px 3px 9px;margin-left:auto"></div>
+            <div class="bl" style="width:48%;height:18px;border-radius:9px 9px 9px 3px"></div>
+            <div class="row" style="margin-top:auto"><div class="bl" style="flex:1;height:16px;border-radius:999px"></div><div class="bl bl--lime" style="width:36px;height:16px;border-radius:999px"></div></div></div></div>
+        <span class="lb">Chat Flow</span>
+      </div>
+      <div class="sc slot" style="height:164px">
+        <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">console — 지표</span></div>
+          <div class="bf__body"><div class="row"><div class="bl bl--lime" style="flex:1;height:30px"></div><div class="bl" style="flex:1;height:30px"></div></div>
+            <div class="bl" style="width:100%;height:44px;margin-top:auto"></div></div></div>
+        <span class="lb">Metrics</span>
+      </div>
+    </div></div>
+  </div></div>
+
+  <div class="wrap hero__in">
+    <h1 class="st st1"><span class="w300">바이브 코딩으로,</span><br><mark>외주</mark>를 해드립니다</h1>
+    <p class="st st2">AI 시대에는 AI에 최적화된 개발자가 필요합니다.
+      검증된 빌더가 당신의 서비스에 맞춰 만듭니다.</p>
+    <div class="st st3">
+      <a class="btn btn--ink" href="contact.html" data-track="cta_click" data-location="hero">프로젝트 문의 <span class="arr">→</span></a>
+    </div>
+  </div>
+  <div class="hero__scroll">SCROLL</div>
+</section>
+
+<!-- ===== S2 문제 제기 — Fixed + 스크롤 연동 ===== -->
+<section class="s2">
+  <div class="wrap">
+    <div class="s2__grid">
+      <div class="s2__left">
+        <h2>요즘 바이브 코딩 외주,<br>이런 곳은 조심하세요</h2>
+        <p class="note">스크롤을 내리면, 실제로 시장에서 벌어지고 있는 일들이 하나씩 나타납니다.</p>
+        <p class="s2__count"><b data-s2now>01</b> / 03</p>
+      </div>
+      <div class="s2__right">
+        <div class="warn" data-warn>
+          <span class="no">CASE 01</span>
+          <h3>포트폴리오 수백 개가<br>전부 목업인 업체</h3>
+          <p>실제 수행한 적 없는 프로젝트를 산업별로 만들어두고, 문의가 오면 실적처럼 보냅니다. "실서비스 URL을 보여달라"는 질문에 답하지 못합니다.</p>
+        </div>
+        <div class="warn" data-warn>
+          <span class="no">CASE 02</span>
+          <h3>모든 섹션이 똑같이<br>움직이는 사이트</h3>
+          <p>전 섹션 동일한 애니메이션 — AI로 한 번에 생성하고 손보지 않은 결과물의 전형적인 신호입니다.</p>
+        </div>
+        <div class="warn" data-warn>
+          <span class="no">CASE 03</span>
+          <h3>싼 가격만 내세우는<br>반값 외주</h3>
+          <p>"반값에 이상한 걸 만들 바에, 제값 주고 좋은 걸 만들겠다" — 한 번 겪어본 발주자들이 실제로 내리는 결론입니다. 물어야 할 것은 가격이 아니라 누가, 어떤 구조로 만드는가입니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S3 일하는 방식 — 세로 스크롤 → 가로 이동 ===== -->
+<div class="s3__outer" id="how">
+  <section class="s3 grain" style="padding:0">
+    <div class="s3__sticky">
+      <div class="s3__head">
+        <div>
+          <span class="lbl-mono">How we work</span>
+          <h2><span class="w300">그래서 우리는,</span><br>일하는 방식이 다릅니다</h2>
+        </div>
+        <span class="s3__cnt"><b data-s3now>01</b> / 04</span>
+      </div>
+      <div class="s3__rail" data-rail>
+        <div class="step">
+          <span class="no">01</span>
+          <h3>기획</h3>
+          <p>요구사항을 화면 목록과 기능 명세로 확정합니다. 여기서 정해진 범위가 이후 모든 판단의 기준선이 됩니다.</p>
+          <span class="out">산출물 — 기획서 · IA · 화면 정의</span>
+        </div>
+        <div class="step">
+          <span class="no">02</span>
+          <h3>디자인 · 목업</h3>
+          <p>기능이 동작하는 가상 사이트(목업)로 확인합니다. 그림이 아니라 실제로 눌러보고 결정하실 수 있습니다.</p>
+          <span class="out">산출물 — 동작 목업 · 디자인 시안</span>
+        </div>
+        <div class="step">
+          <span class="no">03</span>
+          <h3>개발</h3>
+          <p>확정된 시안과 화면상 100% 동일한 완성도로 구현합니다. 검색 최적화 세팅까지 기본입니다.</p>
+          <span class="out">산출물 — 배포 사이트 · SEO 세팅</span>
+        </div>
+        <div class="step">
+          <span class="no">04</span>
+          <h3>검수 · 이관</h3>
+          <p>단계마다 확인을 받고 진행하며, 완료 후 모든 계정과 권한을 안전하게 이전합니다.</p>
+          <span class="out">산출물 — 인계 문서 · 계정 이관</span>
+        </div>
+      </div>
+      <div class="s3__bar"><i data-railbar></i></div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== S4 검증 체계 — 정지 · tight ===== -->
+<section class="s4 tight">
+  <div class="wrap">
+    <span class="tag tag--lime" style="display:inline-block;margin-bottom:20px">Quality System</span>
+    <h2>우리 프로젝트에<br><span class="w300">먼저 적용해 봤습니다</span></h2>
+    <p class="t-lead">화려한 말 대신 구조로 보장합니다 — 이 사이트 자체가 우리 프로세스(기획 → 목업 → 개발)로 만들어지고 있는 실물입니다.</p>
+    <div class="vrow">
+      <span class="no">Q—01</span>
+      <h3>체계적 교육을<br>수료한 빌더</h3>
+      <p>실전 커리큘럼을 통과한 빌더만 프로젝트에 참여합니다. 도구를 아는 것과 제품을 완성해 본 것은 다릅니다.</p>
+    </div>
+    <div class="vrow">
+      <span class="no">Q—02</span>
+      <h3>똑빌더 시스템<br>밀착 관리</h3>
+      <p>진행 상황·품질·이슈를 전용 협업 시스템으로 관리합니다.</p>
+    </div>
+    <div class="vrow">
+      <span class="no">Q—03</span>
+      <h3>선별된 빌더<br>배정</h3>
+      <p>프로젝트 성격에 맞는 검증된 빌더를 선별해 배정합니다. 규모가 크면 시니어 개발자와 투트랙으로 진행해, 맞지 않는 사람이 배정되는 일을 구조적으로 막습니다.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b class="num">3<sub>단계</sub></b><span>기획 → 목업 → 개발, 단계마다 확인</span></div>
+      <div class="stat"><b class="num">17<sub>화면</sub></b><span>범위를 화면 단위로 확정 후 착수</span></div>
+      <div class="stat"><b class="num">3<sub>주</sub></b><span>랜딩 기준 표준 납기 (세팅·이관 포함)</span></div>
+      <div class="stat"><b class="num">30<sub>일</sub></b><span>납품 후 무상 하자보수</span></div>
+    </div>
+
+    <div class="logos">
+      <div class="slot slot--logo"><b>Client A</b><div class="slot__spec"><b>Asset — Logo</b><span>고객사 로고 (흑백 1색)</span><em>SVG · 자료 수령 후</em></div></div>
+      <div class="slot slot--logo"><b>Client B</b><div class="slot__spec"><b>Asset — Logo</b><span>고객사 로고</span><em>SVG</em></div></div>
+      <div class="slot slot--logo"><b>Client C</b><div class="slot__spec"><b>Asset — Logo</b><span>고객사 로고</span><em>SVG</em></div></div>
+      <div class="slot slot--logo"><b>Client D</b><div class="slot__spec"><b>Asset — Logo</b><span>고객사 로고</span><em>SVG</em></div></div>
+      <div class="slot slot--logo"><b>Client E</b><div class="slot__spec"><b>Asset — Logo</b><span>고객사 로고</span><em>SVG</em></div></div>
+      <div class="slot slot--logo"><b>Client F</b><div class="slot__spec"><b>Asset — Logo</b><span>고객사 로고</span><em>SVG</em></div></div>
+    </div>
+
+    <p class="quiet">이 섹션에는 애니메이션이 없습니다 — 신뢰에 관한 정보는 차분하게. · 로고는 사용 동의 수령 후 게재 (C5)</p>
+  </div>
+</section>
+
+<!-- ===== S5 맞춤 매칭 — hover 블러 + 텍스트 전개 ===== -->
+<section class="s5">
+  <div class="wrap">
+    <h2><span class="w300">개발사를 고르지 마세요.</span><br>맞는 개발자를 매칭해 드립니다</h2>
+    <p class="t-lead">카드에 마우스를 올려보세요. (모바일: 탭)</p>
+    <div class="grid g3">
+      <div class="mcard" tabindex="0">
+        <div class="bg slot slot--photo"><span class="ph-label">Photo — 작업 현장</span>
+          <div class="slot__spec"><b>Asset — Match Card</b><span>랜딩 작업 장면 · 어두운 톤 보정</span><em>800×1000px · 세로 4:5</em></div></div>
+        <div class="shade"></div>
+        <div class="plus">+</div>
+        <div class="in">
+          <span class="k">Match — 01</span>
+          <h3>랜딩 · 웹사이트</h3>
+          <p class="sub">브랜드 사이트, 수주용 랜딩</p>
+          <div class="detail">
+            <p>디자인 감도와 인터랙션 구현력이 검증된 빌더가 맡습니다. 전환 트래킹 설계까지 포함합니다.</p>
+            <span class="who">Builder — Design &amp; Interaction</span>
+          </div>
+        </div>
+      </div>
+      <div class="mcard" tabindex="0">
+        <div class="bg slot slot--photo" style="background:linear-gradient(150deg,#2E2E33,#17171B 70%)"><span class="ph-label">Photo — 페어 리뷰</span>
+          <div class="slot__spec"><b>Asset — Match Card</b><span>화이트보드·설계 논의 장면</span><em>800×1000px · 4:5</em></div></div>
+        <div class="shade"></div>
+        <div class="plus">+</div>
+        <div class="in">
+          <span class="k">Match — 02</span>
+          <h3>SaaS · 플랫폼</h3>
+          <p class="sub">관리자·데이터 구조가 있는 서비스</p>
+          <div class="detail">
+            <p>데이터 모델링과 권한 설계 경험이 있는 빌더를 배정합니다. 규모가 크면 시니어 개발자와 투트랙으로.</p>
+            <span class="who">Builder — Data &amp; Architecture</span>
+          </div>
+        </div>
+      </div>
+      <div class="mcard" tabindex="0">
+        <div class="bg slot slot--photo" style="background:linear-gradient(150deg,#33322A,#1B1A15 70%)"><span class="ph-label">Photo — 모니터 클로즈업</span>
+          <div class="slot__spec"><b>Asset — Match Card</b><span>코드·프롬프트 화면 클로즈업</span><em>800×1000px · 4:5</em></div></div>
+        <div class="shade"></div>
+        <div class="plus">+</div>
+        <div class="in">
+          <span class="k">Match — 03</span>
+          <h3>AI 서비스</h3>
+          <p class="sub">LLM 연동, AI 기능 탑재</p>
+          <div class="detail">
+            <p>AI API 연동과 프롬프트 설계를 실무로 다뤄본 빌더가 맡습니다. PoC부터 단계적으로 검증합니다.</p>
+            <span class="who">Builder — LLM &amp; Evaluation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S6 Work 프리뷰 — 대소혼합 + 마스크 리빌 ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>완성한 프로젝트</h2>
+      <a class="more-link" href="work.html">전체 보기</a>
+    </div>
+    <p class="t-lead">실제로 수행한 프로젝트만 올립니다.</p>
+    <div class="wg">
+      <a class="wcard" href="work-detail.html" data-track="work_card" data-cursor="VIEW →">
+        <div class="slot mask">
+          <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">consult-bot.app</span></div>
+            <div class="bf__body"><div class="row"><div class="bl" style="width:30%;height:10px"></div><div class="bl bl--lime" style="width:56px;height:10px;border-radius:999px"></div></div>
+              <div class="bl" style="width:66%;height:22px"></div><div class="bl" style="width:44%;height:10px"></div>
+              <div class="row" style="margin-top:auto"><div class="bl" style="flex:2;height:64px"></div><div class="bl bl--soft" style="flex:1;height:64px"></div></div></div></div>
+          <div class="par"></div>
+          <div class="slot__spec"><b>Asset — Work Cover</b><span>실서비스 메인 화면 (브라우저 프레임)</span><em>1520×1045px · 16:11 @2x</em></div>
+        </div>
+        <div class="meta">
+          <div class="mrow"><span class="tag">AI Service</span><span class="yr num">2026 · 2wks</span></div>
+          <h3>AI 상담 챗봇 구축</h3>
+          <p>반복 문의 70%가 몰리던 고객센터의 상담 자동화 — 2주 PoC로 실데이터 검증 후 전환 프로젝트로 확장.</p>
+          <div class="builders">빌더 3인 · Next.js · LLM API</div>
+        </div>
+      </a>
+      <a class="wcard" href="work-detail.html" data-cursor="VIEW →">
+        <div class="slot mask">
+          <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">brand-landing.kr</span></div>
+            <div class="bf__body"><div class="bl bl--soft" style="width:100%;height:52px;border-radius:8px"></div>
+              <div class="bl" style="width:58%;height:14px"></div>
+              <div class="row" style="margin-top:auto"><div class="bl" style="flex:1;height:28px"></div><div class="bl bl--lime" style="width:64px;height:28px;border-radius:999px"></div></div></div></div>
+          <div class="par"></div>
+          <div class="slot__spec"><b>Asset — Work Cover</b><span>실서비스 히어로 화면</span><em>1520×1140px @2x</em></div>
+        </div>
+        <div class="meta">
+          <div class="mrow"><span class="tag">Landing</span><span class="yr num">2026 · 3wks</span></div>
+          <h3>수주용 브랜드 랜딩</h3>
+          <p>전환 트래킹 설계 포함 · 빌더 2인</p>
+        </div>
+      </a>
+      <a class="wcard" href="work-detail.html" data-cursor="VIEW →">
+        <div class="slot mask">
+          <div class="bf"><div class="bf__bar"><i></i><i></i><i></i><span class="url">cms.studio.io</span></div>
+            <div class="bf__body"><div class="row" style="height:100%"><div style="width:64px;display:flex;flex-direction:column;gap:6px"><div class="bl" style="height:10px"></div><div class="bl bl--lime" style="height:10px"></div><div class="bl" style="height:10px"></div></div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:7px"><div class="bl" style="height:13px;width:48%"></div><div class="bl" style="flex:1"></div><div class="row"><div class="bl" style="flex:1;height:12px"></div><div class="bl" style="flex:1;height:12px"></div></div></div></div></div></div>
+          <div class="par"></div>
+          <div class="slot__spec"><b>Asset — Work Cover</b><span>관리자 콘솔 화면</span><em>1520×855px · 16:9 @2x</em></div>
+        </div>
+        <div class="meta">
+          <div class="mrow"><span class="tag">Platform</span><span class="yr num">2026 · 6wks</span></div>
+          <h3>콘텐츠 관리 플랫폼</h3>
+          <p>비개발자도 운영 가능한 관리자·에디터. 발행 워크플로와 권한 설계 포함 · 빌더 3인</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S7 Insight 프리뷰 — 정지 ===== -->
+<section class="s7" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>우리의 생각</h2>
+      <a class="more-link" href="insight.html">전체 보기</a>
+    </div>
+    <div style="height:34px"></div>
+    <a class="irow" href="insight-detail.html">
+      <span class="cat">발주 가이드</span>
+      <span class="t">바이브 코딩 외주, 잘하는 곳과 못하는 곳의 차이</span>
+      <span class="d num">2026.08.11</span>
+    </a>
+    <a class="irow" href="insight-detail.html">
+      <span class="cat">일하는 방식</span>
+      <span class="t">우리가 3주 만에 랜딩 페이지를 만드는 순서</span>
+      <span class="d num">2026.08.09</span>
+    </a>
+    <a class="irow" href="insight-detail.html">
+      <span class="cat">AI 활용</span>
+      <span class="t">새 AI 툴을 실무에 붙일 때 우리가 확인하는 것들</span>
+      <span class="d num">2026.08.07</span>
+    </a>
+  </div>
+</section>
+
+<!-- ===== S8 콘텐츠·유튜브 — 퍼짐 전환 ===== -->
+<section class="s8 grain">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="lbl-mono">YouTube</span>
+        <h2>영상으로 보는 우리의 작업</h2>
+      </div>
+      <a class="more-link" href="content.html">콘텐츠 탭</a>
+    </div>
+    <p class="t-lead">클릭하면 퍼지는 전환과 함께 이동합니다. (UTM 부착 — 콘솔 확인)</p>
+    <div class="vgrid">
+      <div class="vcell slot" data-expand data-track="youtube_outbound" data-slug="featured">
+        <div class="slot--photo" style="position:absolute;inset:0"><span class="ph-label">Thumbnail — 작업 데스크</span></div>
+        <span class="dur num">12:40</span>
+        <div class="play"><i>▶</i></div>
+        <div class="cap"><b>바이브 코딩으로 실제 외주를 하는 방법</b><span>Featured</span></div>
+        <div class="slot__spec"><b>Asset — YouTube</b><span>유튜브 썸네일 원본</span><em>1280×720px · 16:9</em></div>
+      </div>
+      <div class="vside">
+        <div class="vcell slot" data-expand style="aspect-ratio:16/8">
+          <div class="slot--photo" style="position:absolute;inset:0;background:linear-gradient(150deg,#2E2E33,#17171B)"></div>
+          <span class="dur num">08:15</span><div class="play"><i>▶</i></div>
+          <div class="cap"><b>AI 네이티브로 일한다는 것</b></div>
+          <div class="slot__spec"><b>Asset — YouTube</b><span>썸네일</span><em>1280×720px</em></div>
+        </div>
+        <div class="vcell slot" data-expand style="aspect-ratio:16/8">
+          <div class="slot--photo" style="position:absolute;inset:0;background:linear-gradient(150deg,#33322A,#1B1A15)"></div>
+          <span class="dur num">10:02</span><div class="play"><i>▶</i></div>
+          <div class="cap"><b>외주 견적, 이렇게 잡습니다</b></div>
+          <div class="slot__spec"><b>Asset — YouTube</b><span>썸네일</span><em>1280×720px</em></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S9 FAQ — 아코디언 + URL 분기 ===== -->
+<section class="s9" id="faq">
+  <div class="wrap">
+    <h2>자주 묻는 질문</h2>
+    <p class="t-lead">토픽을 전환하면 URL이 바뀝니다 — 트래킹을 위한 설계입니다.</p>
+
+    <div class="topics" role="tablist">
+      <button class="topic" role="tab" aria-selected="true" data-topic="inquiry" data-track="faq_topic_change">외주 문의</button>
+      <button class="topic" role="tab" aria-selected="false" data-topic="process" data-track="faq_topic_change">진행 방식</button>
+    </div>
+
+    <div data-panel="inquiry">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fa1">바이브 코딩으로 만들면 품질이 괜찮나요?</button>
+        <div class="faq-a" id="fa1" role="region"><p>도구가 아니라 만드는 사람이 품질을 결정합니다. 우리는 교육을 수료하고 검증된 빌더만 배정하고, 전용 시스템으로 진행 과정을 관리해 결과물을 상향 평준화합니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fa2">기간은 얼마나 걸리나요?</button>
+        <div class="faq-a" id="fa2" role="region"><p>규모에 따라 다르지만, 랜딩 페이지 기준 제작 2주 + 환경 세팅·이관 1주가 일반적입니다. 기획 단계에서 일정을 확정해 드립니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fa3">어떤 개발자가 작업하나요?</button>
+        <div class="faq-a" id="fa3" role="region"><p>프로젝트 성격에 맞는 빌더를 선별해 배정합니다. 규모가 큰 프로젝트는 시니어 개발자가 함께 투입되는 투트랙으로 진행합니다.</p></div>
+      </div>
+    </div>
+
+    <div data-panel="process" hidden>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fb1">진행 단계는 어떻게 되나요?</button>
+        <div class="faq-a" id="fb1" role="region"><p>기획 → 디자인(목업) → 개발 순서로 진행하며, 각 단계마다 확인을 받고 다음으로 넘어갑니다. 디자인 단계에서는 실제로 눌러볼 수 있는 목업을 드립니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fb2">수정 요청은 어디까지 가능한가요?</button>
+        <div class="faq-a" id="fb2" role="region"><p>문구·이미지 교체 같은 경미한 수정은 범위 내에서 반영합니다. 화면 추가나 기능 변경은 일정·비용과 함께 별도로 안내드립니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fb3">완료 후 유지보수는요?</button>
+        <div class="faq-a" id="fb3" role="region"><p>납품 후 30일 무상 하자보수가 기본입니다. 이후 기능 추가·운영 관리는 별도 유지보수 계약으로 진행합니다.</p></div>
+      </div>
+    </div>
+
+    <p class="url-demo">현재 URL: <b data-urlnow>…/faq/inquiry</b> — 실서비스에서는 /faq/inquiry ↔ /faq/process 경로 분기 (목업은 해시로 시뮬레이션)</p>
+  </div>
+</section>
+
+<!-- ===== S10 최종 CTA — 마이크로만 · roomy ===== -->
+<section class="s10 roomy">
+  <div class="wrap">
+    <span class="k">Start a Project</span>
+    <h2><span class="w300">만들고 싶은 것이</span><br>있으신가요?</h2>
+    <p>지금 프로젝트를 문의해 주세요. 빠르게 연락드립니다.</p>
+    <a class="btn btn--lime" href="contact.html" data-track="cta_click" data-location="footer_cta" style="font-size:17px;padding:18px 38px">프로젝트 문의 <span class="arr">→</span></a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="ft6">
+      <div class="ft6__brand">
+        <a class="logo" href="index.html"><i></i>AI 빌더 그룹 <small>(가제)</small></a>
+        <p>AI 시대에 최적화된 바이브코딩 외주 전문 그룹</p>
+      </div>
+      <div class="col"><b>Service</b><a href="work.html">Work</a><a href="insight.html">Insight</a><a href="content.html">콘텐츠</a></div>
+      <div class="col"><b>Company</b><a href="index.html#how">일하는 방식</a><a href="index.html#faq">FAQ</a><span class="soon">채용 (준비 중)</span></div>
+      <div class="col"><b>Contact</b><a href="contact.html">프로젝트 문의</a><a href="mailto:contact@example.com">contact@_______</a></div>
+      <div class="col"><b>Social</b><a href="content.html">YouTube</a><span class="soon">Instagram (예정)</span><span class="soon">LinkedIn (예정)</span></div>
+    </div>
+    <p class="ft__legal"><b>AI 빌더 그룹</b> (상호·대표·사업자등록번호·주소 — 자료 수령 후 기입)<br>이메일 문의는 pluug 장애 대비 대체 경로입니다.</p>
+    <div class="ft__bottom"><span>© 2026 AI Builder Group</span><a href="privacy.html">개인정보처리방침</a></div>
+  </div>
+</footer>
+
+<div class="expand-ov" data-ov></div>
+
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mobile = window.matchMedia('(max-width: 900px)');
+
+  /* S2: 스크롤 위치에 따라 카드 활성 + 카운터 */
+  var warns = document.querySelectorAll('[data-warn]');
+  var s2now = document.querySelector('[data-s2now]');
+  function s2Update() {
+    if (mobile.matches) { warns.forEach(function (w) { w.classList.add('active'); }); return; }
+    var mid = window.innerHeight * 0.55, act = 0;
+    warns.forEach(function (w, i) {
+      var r = w.getBoundingClientRect();
+      var on = r.top < mid && r.bottom > mid * 0.5;
+      w.classList.toggle('active', on);
+      if (on) act = i;
+    });
+    if (s2now) s2now.textContent = '0' + (act + 1);
+  }
+  window.addEventListener('scroll', s2Update, { passive: true }); s2Update();
+
+  /* S3: 세로 스크롤 → 레일 가로 이동 + 스텝 카운터 */
+  var outer = document.querySelector('.s3__outer');
+  var rail = document.querySelector('[data-rail]');
+  var bar = document.querySelector('[data-railbar]');
+  var s3now = document.querySelector('[data-s3now]');
+  function s3Update() {
+    if (mobile.matches || reduced || !outer || !rail) return;
+    var r = outer.getBoundingClientRect();
+    var total = r.height - window.innerHeight;
+    var p = Math.min(1, Math.max(0, -r.top / total));
+    var dist = rail.scrollWidth - window.innerWidth;
+    rail.style.transform = 'translateX(' + (-p * dist) + 'px)';
+    if (bar) bar.style.width = (p * 100) + '%';
+    if (s3now) s3now.textContent = '0' + Math.min(4, Math.floor(p * 4) + 1);
+  }
+  window.addEventListener('scroll', s3Update, { passive: true }); s3Update();
+
+  /* S5: 모바일 탭 토글 */
+  document.querySelectorAll('.mcard').forEach(function (c) {
+    c.addEventListener('click', function () { if (mobile.matches) c.classList.toggle('open'); });
+  });
+
+  /* S6: 카드 이미지 패럴랙스 */
+  var pars = document.querySelectorAll('.wcard .par');
+  function parUpdate() {
+    if (reduced || mobile.matches) return;
+    pars.forEach(function (p) {
+      var r = p.closest('.slot').getBoundingClientRect();
+      var t = (r.top + r.height / 2 - window.innerHeight / 2) / window.innerHeight;
+      p.style.transform = 'translateY(' + (t * 24) + 'px)';
+    });
+  }
+  window.addEventListener('scroll', parUpdate, { passive: true }); parUpdate();
+
+  /* S8: 퍼짐 전환 → content.html */
+  var ov = document.querySelector('[data-ov]');
+  document.querySelectorAll('[data-expand]').forEach(function (v) {
+    v.addEventListener('click', function () {
+      window.track('youtube_outbound', { utm: 'utm_source=builder-group&utm_medium=content' });
+      if (reduced) { location.href = 'content.html'; return; }
+      var r = v.getBoundingClientRect();
+      ov.style.cssText = 'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;opacity:1;';
+      requestAnimationFrame(function () {
+        ov.classList.add('go');
+        ov.style.cssText += 'left:0;top:0;width:100vw;height:100vh;';
+      });
+      setTimeout(function () { location.href = 'content.html'; }, 520);
+    });
+  });
+
+  /* S9: FAQ 아코디언 + URL 해시 분기 */
+  document.querySelectorAll('.faq-q').forEach(function (q) {
+    q.addEventListener('click', function () {
+      var open = q.getAttribute('aria-expanded') === 'true';
+      q.setAttribute('aria-expanded', String(!open));
+      var a = document.getElementById(q.getAttribute('aria-controls'));
+      a.style.maxHeight = open ? '0' : a.scrollHeight + 'px';
+    });
+  });
+  var urlNow = document.querySelector('[data-urlnow]');
+  function setTopic(t) {
+    document.querySelectorAll('.topic').forEach(function (b) {
+      b.setAttribute('aria-selected', String(b.dataset.topic === t));
+    });
+    document.querySelectorAll('[data-panel]').forEach(function (p) {
+      p.hidden = p.dataset.panel !== t;
+    });
+    if (location.hash !== '#faq-' + t) history.replaceState(null, '', '#faq-' + t);
+    if (urlNow) urlNow.textContent = '…/faq/' + t;
+  }
+  document.querySelectorAll('.topic').forEach(function (b) {
+    b.addEventListener('click', function () { setTopic(b.dataset.topic); });
+  });
+  if (location.hash.indexOf('#faq-') === 0) setTopic(location.hash.replace('#faq-', ''));
+})();
+</script>
+</body>
+</html>

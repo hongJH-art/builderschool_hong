@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이미지·사진 아트디렉션 가이드 — 무엇을, 어떻게 넣을 것인가</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+:root {
+  --paper:#F4F1EA; --paper-2:#FBF9F4; --paper-3:#EFEDE3; --ink:#0E0E0C; --ink-2:#2A2A22;
+  --lime:#D8FF3D; --muted:#807E74; --muted-2:#A6A498; --line:#DEDCD0; --line-2:#C7C5B9;
+  --sans:"Pretendard Variable",Pretendard,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--sans);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.65;letter-spacing:-0.01em;-webkit-font-smoothing:antialiased}
+a{color:inherit} ::selection{background:var(--lime)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+header.top{padding:72px 0 44px;border-bottom:1px solid var(--line)}
+h1{margin:0 0 16px;font-size:clamp(34px,4.6vw,56px);font-weight:800;letter-spacing:-0.045em;line-height:1.1}
+h1 mark{background:var(--lime);padding:0 .08em;border-radius:8px}
+.lead{color:var(--muted);max-width:72ch;margin:0;font-size:16px}
+.lead b{color:var(--ink)}
+h2{margin:0 0 8px;font-size:28px;font-weight:800;letter-spacing:-0.035em}
+h3{margin:0 0 6px;font-size:17px;font-weight:800;letter-spacing:-0.025em}
+.sub{color:var(--muted);margin:0 0 32px;font-size:14.5px}
+section{padding:64px 0;border-bottom:1px solid var(--line)}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;background:var(--paper-3);color:var(--muted);padding:4px 10px;border-radius:999px;white-space:nowrap}
+.tag--main{background:var(--ink);color:var(--lime)}
+.tag--ok{background:var(--lime);color:var(--ink)}
+.tag--warn{background:#e8b04b;color:var(--ink)}
+.tag--no{background:#c0392b;color:#fff}
+
+/* 타입 카드 */
+.types{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.tp{border:1px solid var(--line);border-radius:22px;background:var(--paper-2);padding:26px 28px}
+.tp .hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.tp .hd b{font-size:19px;letter-spacing:-0.03em}
+.tp p{margin:0 0 12px;font-size:13.5px;color:var(--muted);line-height:1.65}
+.tp p b{color:var(--ink)}
+.tp .pm{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12.5px}
+.tp .pm div{border-top:1px dashed var(--line);padding-top:10px}
+.tp .pm span{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--muted-2);display:block;margin-bottom:4px}
+.tp ul{margin:6px 0 0;padding-left:16px}
+.tp li{margin-bottom:3px}
+
+/* 데모 공통 */
+.demo{border:1px solid var(--line);border-radius:22px;background:var(--paper-2);padding:28px;display:grid;grid-template-columns:380px 1fr;gap:32px;align-items:center;margin-bottom:18px}
+.demo .txt h3{font-size:18px}
+.demo .txt p{margin:0 0 10px;font-size:13.5px;color:var(--muted);line-height:1.7}
+.demo .txt p b{color:var(--ink)}
+.demo .txt code{font-family:var(--mono);font-size:11px;background:var(--paper-3);padding:2px 8px;border-radius:6px}
+.demo .stage{display:flex;align-items:center;justify-content:center;min-height:230px;border-radius:16px;padding:26px}
+
+/* 데모1: 브라우저 프레임 */
+.stage--brw{background:linear-gradient(135deg,#E8E4D8,#DDE7C8)}
+.brw{width:100%;max-width:300px;border-radius:12px;overflow:hidden;background:#fff;
+  box-shadow:0 24px 48px -12px rgba(14,14,12,.28), 0 2px 6px rgba(14,14,12,.08);border:1px solid rgba(14,14,12,.08)}
+.brw .bar{display:flex;align-items:center;gap:5px;background:#F2F0EA;padding:8px 10px;border-bottom:1px solid #E4E1D6}
+.brw .bar i{width:8px;height:8px;border-radius:50%;background:#D9D5C7}
+.brw .bar .url{flex:1;background:#fff;border-radius:6px;font-family:var(--mono);font-size:7px;color:#A6A498;padding:3px 8px;margin-left:6px}
+.brw .body{padding:14px}
+.brw .h{height:10px;width:70%;background:#0E0E0C;border-radius:4px;margin-bottom:6px}
+.brw .h2{height:10px;width:45%;background:#0E0E0C;border-radius:4px;margin-bottom:10px}
+.brw .l{height:5px;background:#E6E3D8;border-radius:3px;margin-bottom:4px}
+.brw .btn{display:inline-block;margin-top:8px;background:#D8FF3D;border-radius:99px;height:14px;width:56px}
+.brw .grid{display:flex;gap:6px;margin-top:12px}
+.brw .grid i{flex:1;height:34px;background:#F2F0EA;border-radius:6px}
+
+/* 데모2: Work 썸네일 규격 */
+.stage--thumb{background:var(--ink)}
+.thumbdemo{width:100%;max-width:300px;aspect-ratio:16/11;border-radius:16px;overflow:hidden;position:relative;
+  background:linear-gradient(140deg,#20241C,#0E0E0C)}
+.thumbdemo .tilt{position:absolute;left:14%;top:18%;width:86%;border-radius:8px 0 0 0;overflow:hidden;
+  transform:rotate(-4deg) translateY(6px);box-shadow:-18px 24px 40px rgba(0,0,0,.5);background:#fff}
+.thumbdemo .tilt .bar{background:#F2F0EA;height:14px;display:flex;align-items:center;gap:4px;padding:0 8px}
+.thumbdemo .tilt .bar i{width:5px;height:5px;border-radius:50%;background:#D9D5C7}
+.thumbdemo .tilt .body{padding:10px}
+.thumbdemo .tilt .h{height:8px;width:60%;background:#0E0E0C;border-radius:3px;margin-bottom:5px}
+.thumbdemo .tilt .l{height:4px;background:#E6E3D8;border-radius:2px;margin-bottom:3px}
+.thumbdemo .tilt .btn{display:inline-block;margin-top:5px;background:#D8FF3D;border-radius:99px;height:10px;width:40px}
+.thumbdemo .cat{position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:rgba(244,241,234,.6);text-transform:uppercase}
+.thumbdemo::after{content:"";position:absolute;inset:0;background:radial-gradient(80% 60% at 75% 20%,rgba(216,255,61,.14),transparent 60%)}
+
+/* 데모3: 듀오톤 (CSS filter 실연) */
+.stage--duo{background:var(--paper-3);gap:10px}
+.duo{display:flex;gap:12px;width:100%;justify-content:center}
+.duo figure{margin:0;text-align:center;flex:1;max-width:150px}
+.duo .img{aspect-ratio:4/5;border-radius:12px;background-image:
+  radial-gradient(60% 40% at 30% 25%,#8a8474 0%,transparent 60%),
+  radial-gradient(50% 60% at 70% 70%,#4a463c 0%,transparent 55%),
+  linear-gradient(160deg,#b7b1a0 0%,#6b665a 45%,#2e2b25 100%)}
+.duo figcaption{font-family:var(--mono);font-size:9px;color:var(--muted-2);margin-top:8px;letter-spacing:.08em}
+.duo .f-duo{filter:grayscale(1) contrast(1.15) brightness(1.05) sepia(.5) hue-rotate(28deg) saturate(2.4)}
+.duo .f-grain{position:relative;overflow:hidden;filter:grayscale(.9) contrast(1.05) brightness(1.04)}
+.duo .f-grain::after{content:"";position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* 데모4: 문서 스냅샷 */
+.stage--doc{background:linear-gradient(135deg,#EFEDE3,#E4E7D4)}
+.doc{width:100%;max-width:260px;background:#fff;border:1px solid rgba(14,14,12,.1);border-radius:4px;
+  padding:18px 20px;box-shadow:0 16px 32px -8px rgba(14,14,12,.18);transform:rotate(1.5deg)}
+.doc .mono-h{font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:#A6A498;margin-bottom:8px}
+.doc .h{height:9px;width:75%;background:#0E0E0C;border-radius:3px;margin-bottom:10px}
+.doc table{width:100%;border-collapse:collapse}
+.doc td{border:1px solid #E6E3D8;height:14px;width:33%}
+.doc td.hl{background:#D8FF3D}
+.doc .l{height:4px;background:#E6E3D8;border-radius:2px;margin-top:8px}
+
+/* 섹션별 플랜 표 */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:18px;background:var(--paper-2)}
+table.pt{width:100%;border-collapse:collapse;font-size:13px}
+.pt th,.pt td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+.pt th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);font-weight:500}
+.pt tbody tr:last-child td{border-bottom:0}
+.pt td b{letter-spacing:-0.02em}
+.pt td .m{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* 레퍼런스 카드 */
+.refs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.rf{border:1px solid var(--line);border-radius:18px;background:var(--paper-2);padding:20px 22px}
+.rf .hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.rf b{font-size:16px;letter-spacing:-0.02em}
+.rf a{font-family:var(--mono);font-size:10px;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line-2)}
+.rf a:hover{color:var(--ink);border-color:var(--ink)}
+.rf p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.6}
+.rf p b{color:var(--ink);font-size:12.5px}
+
+/* 규칙 */
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rl{border:1px solid var(--line);border-radius:16px;background:var(--paper-2);padding:16px 18px;font-size:13px}
+.rl b{display:block;margin-bottom:3px;letter-spacing:-0.02em}
+.rl span{color:var(--muted);font-size:12px;line-height:1.55;display:block}
+.rl.no{border-color:#c0392b33;background:#c0392b0a}
+.rl.no b{color:#c0392b}
+
+footer.bt{padding:36px 0 56px;color:var(--muted-2);font-size:11px;font-family:var(--mono);letter-spacing:.05em}
+@media(max-width:1000px){.types{grid-template-columns:1fr}.demo{grid-template-columns:1fr}.refs{grid-template-columns:1fr}.rules{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="eyebrow">Image Art Direction · AI Builder Group</div>
+  <h1>이미지는 <mark>무엇을, 어떻게</mark> 넣을 것인가</h1>
+  <p class="lead">클라이언트의 말: <b>"에셋의 퀄리티가 홈페이지의 퀄리티를 좌우한다."</b>
+  회사 홈페이지는 사실상 텍스트+이미지뿐이다. 우리는 신생 브랜드라 실적 사진·팀 사진이 없다 —
+  그래서 <b>'무엇을 찍을까'가 아니라 '무엇을 만들까'</b>가 이 문서의 주제다.
+  아래 처리 예시는 전부 이 페이지 안에서 실제 CSS로 렌더된 것이므로, 그대로 목업에 이식하면 된다.</p>
+</div></header>
+
+<!-- ① 이미지 타입 전략 -->
+<section><div class="wrap">
+  <div class="eyebrow">Strategy — 쓸 수 있는 이미지 5타입</div>
+  <h2>이미지 타입별 전략과 딸깍 위험도</h2>
+  <p class="sub">신생 브랜드의 제약(실적·팀 사진 없음)을 전제로, 실제로 조달 가능한 것만 다룬다.</p>
+  <div class="types">
+
+    <div class="tp">
+      <div class="hd"><b>A. UI 실물 스크린샷 + 프레임</b><span class="tag tag--main">주력 — 전체의 70%</span><span class="tag tag--ok">딸깍 위험 없음</span></div>
+      <p>우리가 만든 결과물의 스크린샷을 브라우저·디바이스 프레임에 넣은 것. <b>개발 외주 사이트에서 유일하게 "증거"가 되는 이미지다.</b>
+      Linear·Vercel·MetaLab이 사이트 전체를 이것만으로 만든다. 지금 만든 목업 자체가 첫 소재다.</p>
+      <div class="pm">
+        <div><span>어디에</span>S1 히어로 카루셀 · S6/P-02 Work 썸네일 · P-03 본문</div>
+        <div><span>조달</span>이번 목업 캡처 + 똑개 실적 스크린샷(Q4 확정 후)</div>
+      </div>
+    </div>
+
+    <div class="tp">
+      <div class="hd"><b>B. 통일 규격 썸네일 컴포지션</b><span class="tag tag--main">Work 전용 규격</span><span class="tag tag--ok">딸깍 위험 없음</span></div>
+      <p>스크린샷을 <b>통일된 배경색 + 동일 기울기 + 동일 그림자</b>로 조판한 카드 커버. Behance 케이스 커버·Pentagram 그리드의 문법.
+      리서치 결론: <b>"모든 타일이 같은 무게를 가질 때 다양함이 '범위'로 읽히고, 다르면 '난잡함'으로 읽힌다."</b></p>
+      <div class="pm">
+        <div><span>어디에</span>P-02 Work 목록 전체 · S6 프리뷰</div>
+        <div><span>규칙</span>프로젝트당 배경색 1개(팔레트 6색 순환), 구도는 전 카드 동일</div>
+      </div>
+    </div>
+
+    <div class="tp">
+      <div class="hd"><b>C. 현장·사물 사진 (톤 보정 필수)</b><span class="tag">보조 — 20%</span><span class="tag tag--warn">보정 없으면 스톡 티</span></div>
+      <p>키보드 위의 손, 화이트보드, 회의 노트, 모니터 앞 뒷모습 같은 <b>클로즈업·부분 컷.</b> 얼굴 정면 컷은 쓰지 않는다(인물 미확정 + 스톡 티).
+      반드시 그레인+틴트 보정으로 팔레트에 묶는다 — 2026 트렌드 리서치에서도 "필름 그레인 + 웜 뉴트럴 톤"이 에디토리얼 기준.</p>
+      <div class="pm">
+        <div><span>어디에</span>S3 스텝 카드 배경 · Insight 커버 · S2 분위기 컷</div>
+        <div><span>조달</span>Unsplash/Pexels → 듀오톤·그레인 보정 (아래 데모)</div>
+      </div>
+    </div>
+
+    <div class="tp">
+      <div class="hd"><b>D. 산출물 문서 스냅샷</b><span class="tag">차별화 무기</span><span class="tag tag--ok">딸깍 위험 없음</span></div>
+      <p>기획서 표지, IA 다이어그램, 검수 체크리스트를 <b>문서 실물처럼 조판한 이미지.</b> "일하는 방식"이 소구점인 우리에게는
+      포트폴리오보다 강한 증거다 — 프로세스를 말이 아니라 산출물 실물로 보여준다.</p>
+      <div class="pm">
+        <div><span>어디에</span>S3 각 스텝의 산출물 · S4 검증 체계 · P-03 과정 서술</div>
+        <div><span>조달</span>실제 문서(이 프로젝트 기획서!)를 규격 조판</div>
+      </div>
+    </div>
+
+    <div class="tp" style="grid-column:1/-1">
+      <div class="hd"><b>E. 추상 그라디언트 · 3D · AI 생성 이미지</b><span class="tag tag--no">원칙 금지</span></div>
+      <p><b>"AI 딸깍 금지"가 1순위 요구인 프로젝트에서 AI 티가 나는 이미지는 자살골이다.</b> 추상 3D 블롭, AI 생성 일러스트, 의미 없는 그라디언트 카드가 대표적 딸깍 신호.
+      예외는 둘뿐 — ① S1 배경의 <b>흐린 그라디언트(장식이 아니라 조명 역할)</b> ② 노이즈·그레인 <b>텍스처(사진 보정 재료)</b>. 이 둘도 콘텐츠 이미지로는 쓰지 않는다.</p>
+    </div>
+
+  </div>
+</div></section>
+
+<!-- ② 처리 규격 라이브 데모 -->
+<section><div class="wrap">
+  <div class="eyebrow">Treatment — 실제 렌더링 데모</div>
+  <h2>처리 규격 4종 (이 화면에서 실연 중)</h2>
+  <p class="sub">아래 이미지들은 전부 이 페이지의 CSS로 그린 것이다. 규격 값을 그대로 목업에 옮기면 된다.</p>
+
+  <div class="demo">
+    <div class="stage stage--brw">
+      <div class="brw">
+        <div class="bar"><i></i><i></i><i></i><span class="url">builder-group.ai/work</span></div>
+        <div class="body"><div class="h"></div><div class="h2"></div><div class="l"></div><div class="l" style="width:85%"></div><div class="l" style="width:60%"></div><span class="btn"></span><div class="grid"><i></i><i></i><i></i></div></div>
+      </div>
+    </div>
+    <div class="txt">
+      <h3>① 브라우저 프레임 — 타입 A의 기본 규격</h3>
+      <p>스크린샷을 날것으로 두지 않고 <b>브라우저 크롬(신호등 3개 + URL바)</b>에 넣는다. URL바에 실제 주소를 넣으면 "진짜 배포됐다"는 신호가 된다.</p>
+      <p>규격: 코너 <code>12px</code> · 보더 <code>1px rgba(ink,.08)</code> · 그림자 <code>0 24px 48px -12px rgba(ink,.28)</code> · 배경은 팔레트 파생 그라디언트(채도 낮게).</p>
+      <p><b>레퍼런스:</b> Linear 릴리스 노트, Raycast 홈, Arc 브라우저 사이트 — 셋 다 "스크린샷+프레임+은은한 글로우"가 전부다.</p>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="stage stage--thumb">
+      <div class="thumbdemo">
+        <span class="cat">AI SERVICE</span>
+        <div class="tilt">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <div class="body"><div class="h"></div><div class="l"></div><div class="l" style="width:80%"></div><div class="l" style="width:55%"></div><span class="btn"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="txt">
+      <h3>② Work 썸네일 규격 — 타입 B의 통일 조판</h3>
+      <p>전 카드 공통: <b>어두운 단색 배경 + 좌상단 카테고리(모노폰트) + 스크린샷 -4° 기울여 우하단 크롭 + 라임 글로우 1곳.</b></p>
+      <p>배경색만 프로젝트마다 다르게(다크 그린·다크 네이비·다크 브라운 등 6색 순환), 구도는 절대 바꾸지 않는다 — <b>"같은 프레이밍이 다양함을 범위로 읽히게 한다."</b></p>
+      <p><b>레퍼런스:</b> Behance 케이스 커버 상위작들, Pentagram 그리드, Artboard Studio 템플릿.</p>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="stage stage--duo">
+      <div class="duo">
+        <figure><div class="img"></div><figcaption>원본 (스톡 티)</figcaption></figure>
+        <figure><div class="img f-duo"></div><figcaption>듀오톤 (라임 틴트)</figcaption></figure>
+        <figure><div class="img f-grain"></div><figcaption>모노 + 그레인</figcaption></figure>
+      </div>
+    </div>
+    <div class="txt">
+      <h3>③ 사진 톤 보정 — 타입 C를 팔레트에 묶는 법</h3>
+      <p>스톡 사진을 원본 그대로 쓰면 100% 티가 난다. 두 가지 처리 중 하나를 <b>사이트 전체에 일괄 적용:</b></p>
+      <p><b>듀오톤:</b> <code>grayscale(1) sepia(.5) hue-rotate(28deg) saturate(2.4)</code> — Spotify Design이 정착시킨 문법. 어떤 출처의 사진이든 우리 색이 된다.</p>
+      <p><b>모노+그레인:</b> <code>grayscale(.9)</code> + SVG 노이즈 오버레이 <code>mix-blend-mode:overlay</code> — 2026 트렌드 리서치의 "필름 그레인·아날로그 질감" 방향. 흑백이라 인물·장소가 익명화되는 부수 효과도 있다.</p>
+      <p>→ <b>권고: 모노+그레인을 기본</b>으로, 라임 듀오톤은 커버 1~2곳만.</p>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="stage stage--doc">
+      <div class="doc">
+        <div class="mono-h">SPEC — 기능명세 v1.0</div>
+        <div class="h"></div>
+        <table><tr><td></td><td class="hl"></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr></table>
+        <div class="l"></div><div class="l" style="width:70%"></div>
+      </div>
+    </div>
+    <div class="txt">
+      <h3>④ 산출물 문서 스냅샷 — 타입 D, 우리만의 무기</h3>
+      <p>기획서·IA·검수 체크리스트를 <b>흰 종이 질감 + 1.5° 기울기 + 부드러운 그림자</b>로 조판. 라임 하이라이트를 문서 안에 한 곳만.</p>
+      <p>S3 "일하는 방식" 각 스텝 카드에 이 규격으로 <b>실제 산출물</b>을 깔면, "체계적으로 일한다"는 주장이 실물 증거로 바뀐다. 소재는 이미 있다 — 이 프로젝트의 기획서·IA 문서가 그것이다.</p>
+      <p><b>레퍼런스:</b> Stripe Docs 카드, Notion 템플릿 갤러리의 문서 프리뷰.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- ③ 섹션별 이미지 플랜 -->
+<section><div class="wrap">
+  <div class="eyebrow">Placement — 어느 섹션에 무엇을</div>
+  <h2>섹션별 이미지 플랜</h2>
+  <p class="sub">타입(A~D)과 처리 규격(①~④)을 화면에 배정한 것. 이대로 소재를 준비하면 된다.</p>
+  <div class="tbl"><table class="pt">
+    <thead><tr><th>위치</th><th>이미지</th><th>타입·규격</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td><b>S1 Hero</b></td><td>실물 스크린샷 카루셀(비스듬히 흘러가는 띠) 또는 브라우저 프레임 1개 + 그라디언트 조명</td><td class="m">A·① (+E 배경만)</td><td>똑개 히어로의 "포트폴리오 15개 카루셀" 문법. 콘텐츠 없으면 목업 캡처로 대체</td></tr>
+      <tr><td><b>S2 문제 제기</b></td><td>이미지 없음 — 텍스트 카드 유지</td><td class="m">—</td><td>고발 섹션에 이미지가 붙으면 조롱처럼 보임. 텍스트가 세다</td></tr>
+      <tr><td><b>S3 일하는 방식</b></td><td>스텝별 산출물 문서 스냅샷 (기획서→시안→코드→체크리스트)</td><td class="m">D·④</td><td>다크 배경 위 흰 문서 — 명암 대비가 자동으로 시선 유도</td></tr>
+      <tr><td><b>S4 검증 체계</b></td><td>똑빌더 UI 스크린샷 1컷 (권한 확인 후) 또는 문서 스냅샷</td><td class="m">A·① / D·④</td><td>정지 섹션이므로 이미지도 정적 1컷만</td></tr>
+      <tr><td><b>S5 매칭</b></td><td>hover 시 카드 안에 소형 스크린샷 등장 (토스 팀문화 카드 문법)</td><td class="m">A·①</td><td>기본 상태는 텍스트만 — 이미지는 hover 보상</td></tr>
+      <tr><td><b>S6 Work 프리뷰</b></td><td>통일 규격 썸네일 3~4장</td><td class="m">B·②</td><td>배경색 순환, 구도 고정</td></tr>
+      <tr><td><b>S7 Insight</b></td><td>이미지 없음 — 텍스트 리스트 유지</td><td class="m">—</td><td>정지 섹션. 읽는 영역</td></tr>
+      <tr><td><b>S8 유튜브</b></td><td><b>실제 유튜브 썸네일</b> (이솝 채널)</td><td class="m">실물</td><td>가짜 썸네일 금지 — 실제 채널 썸네일이 곧 신뢰</td></tr>
+      <tr><td><b>P-02 Work 목록</b></td><td>통일 규격 썸네일 전체</td><td class="m">B·②</td><td>plus-ex식 대소 혼합 그리드와 결합</td></tr>
+      <tr><td><b>P-03 Work 상세</b></td><td>히어로: 브라우저 프레임 대형 1컷 / 본문: 스크린샷 2~3컷 + 모바일 프레임 1컷 교차</td><td class="m">A·①</td><td>Significa식 — 글 사이에 이미지가 리듬으로 끼어듦</td></tr>
+      <tr><td><b>P-04·05 Insight</b></td><td>커버: 모노+그레인 사진 또는 타이포 커버 / 본문: 스크린샷·다이어그램</td><td class="m">C·③ / D</td><td>커버 톤 보정 일괄 적용 — 리스트가 한 몸으로 보이는 조건</td></tr>
+      <tr><td><b>P-08 문의</b></td><td>이미지 없음</td><td class="m">—</td><td>전환 페이지에서 시선 뺏는 요소 금지</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<!-- ④ 레퍼런스 -->
+<section><div class="wrap">
+  <div class="eyebrow">References — 사진·이미지를 잘 쓰는 곳</div>
+  <h2>이미지 아트디렉션 레퍼런스</h2>
+  <p class="sub">앞서 만든 레퍼런스 가이드(레이아웃·인터랙션)와 별개로, 이번엔 "이미지 처리"만 보는 목록이다.</p>
+  <div class="refs">
+    <div class="rf"><div class="hd"><b>Linear</b><a href="https://linear.app" target="_blank">linear.app ↗</a><span class="tag tag--main">타입 A 교본</span></div>
+      <p><b>스크린샷+글로우만으로 사이트 전체를 만든 곳.</b> 다크 배경 위 UI 컷의 보더·광량 처리, 스크린샷 일부만 크롭해 확대하는 법.</p></div>
+    <div class="rf"><div class="hd"><b>Raycast</b><a href="https://raycast.com" target="_blank">raycast.com ↗</a></div>
+      <p>디바이스 프레임 없이 <b>창(window) 단위 스크린샷</b>을 띄우는 법. 그림자·라운드·배경 그라디언트 조명의 균형이 우리 ① 규격의 원형.</p></div>
+    <div class="rf"><div class="hd"><b>MetaLab</b><a href="https://metalab.com" target="_blank">metalab.com ↗</a></div>
+      <p>에이전시 케이스 스터디에서 <b>제품 스크린샷을 주인공으로</b> 쓰는 법. 실물 UI가 곧 포트폴리오라는 문법이 우리와 같다.</p></div>
+    <div class="rf"><div class="hd"><b>Instrument</b><a href="https://instrument.com" target="_blank">instrument.com ↗</a></div>
+      <p>사진과 그래픽이 한 팔레트로 묶이는 대형 에이전시의 아트디렉션. <b>사진 위 타이포 얹는 법</b>, 컷 사이 톤 통일.</p></div>
+    <div class="rf"><div class="hd"><b>Bakken & Bæck</b><a href="https://bakkenbaeck.com" target="_blank">bakkenbaeck.com ↗</a></div>
+      <p>북유럽식 <b>절제된 사진 사용</b> — 사진 수를 줄이고 한 컷의 질을 올리는 전략. 타입 C를 몇 컷만 쓸 때의 기준.</p></div>
+    <div class="rf"><div class="hd"><b>Pentagram</b><a href="https://pentagram.com" target="_blank">pentagram.com ↗</a><span class="tag">타입 B 교본</span></div>
+      <p>케이스 커버 그리드의 정석 — <b>규격은 같고 내용물만 다른</b> 썸네일 수백 장이 어떻게 "범위"로 읽히는지.</p></div>
+    <div class="rf"><div class="hd"><b>Spotify Design</b><a href="https://spotify.design" target="_blank">spotify.design ↗</a><span class="tag">타입 C 교본</span></div>
+      <p><b>듀오톤 처리의 원조.</b> 출처가 제각각인 사진을 브랜드 컬러 하나로 묶는 법. 우리 ③ 규격의 근거.</p></div>
+    <div class="rf"><div class="hd"><b>토스 · 우아한형제들</b><a href="https://toss.im" target="_blank">toss.im ↗</a><a href="https://www.woowahan.com" target="_blank">woowahan ↗</a></div>
+      <p>한국 회사 사이트에서 <b>사람 사진의 온도</b> — 연출 없는 실무 컷, 뒷모습·손·화면 위주. 얼굴 정면 스톡을 쓰지 않는 이유의 증거.</p></div>
+    <div class="rf"><div class="hd"><b>Stripe Docs · Notion</b><a href="https://stripe.com/docs" target="_blank">stripe ↗</a><a href="https://notion.com/templates" target="_blank">notion ↗</a></div>
+      <p>문서·다이어그램을 <b>제품 이미지처럼</b> 조판하는 법 — 우리 타입 D(산출물 스냅샷)의 레퍼런스.</p></div>
+  </div>
+
+  <h3 style="margin:36px 0 12px">소싱·제작 도구</h3>
+  <div class="refs">
+    <div class="rf"><div class="hd"><b>shots.so</b><a href="https://shots.so" target="_blank">↗</a><span class="tag tag--ok">무료</span></div><p>스크린샷 → 브라우저/디바이스 프레임+배경 조판. 우리 ①·② 규격을 즉시 만들 수 있는 최단 경로.</p></div>
+    <div class="rf"><div class="hd"><b>Artboard Studio</b><a href="https://artboard.studio" target="_blank">↗</a></div><p>브라우저에서 목업 컴포지션 제작·고해상도 출력. 썸네일 규격 양산용.</p></div>
+    <div class="rf"><div class="hd"><b>Screen Studio / Rotato</b><a href="https://screen.studio" target="_blank">↗</a></div><p>스크린 녹화를 프레임+모션과 함께 — S8용 영상 소재, P-03 GIF 제작.</p></div>
+    <div class="rf"><div class="hd"><b>Unsplash / Pexels</b><a href="https://unsplash.com" target="_blank">↗</a></div><p>타입 C 원본 소싱. 검색어: <b>workspace closeup · hands keyboard · whiteboard sketch · monitor glow</b>. 반드시 ③ 보정 후 사용.</p></div>
+  </div>
+</div></section>
+
+<!-- ⑤ 규칙 -->
+<section><div class="wrap">
+  <div class="eyebrow">Rules — 전 이미지 공통</div>
+  <h2>공통 규칙 & 금지 목록</h2>
+  <p class="sub">이 6+4개만 지키면 어떤 소재를 넣어도 사이트가 한 몸으로 보인다.</p>
+  <div class="rules">
+    <div class="rl"><b>코너 반경 통일</b><span>콘텐츠 이미지 12px · 카드 썸네일 16px · 풀블리드 0. 세 값 외 금지.</span></div>
+    <div class="rl"><b>보더 1px 항상</b><span>밝은 배경: rgba(ink,.08) · 다크: rgba(paper,.16). 이미지가 배경에 뜨는 것을 막는다.</span></div>
+    <div class="rl"><b>그림자 2단계만</b><span>카드: 0 24px 48px -12px @28% · 문서: 0 16px 32px -8px @18%. 그 외 금지.</span></div>
+    <div class="rl"><b>사진은 일괄 톤 보정</b><span>모노+그레인 기본, 라임 듀오톤은 커버 1~2곳. 원본 컬러 스톡 그대로 금지.</span></div>
+    <div class="rl"><b>스크린샷엔 실제 텍스트</b><span>lorem·흐린 목업 대신 실제 화면. URL바에 실주소. "진짜"가 디테일에서 나온다.</span></div>
+    <div class="rl"><b>alt 전수 작성</b><span>접근성 기준선(TI-11). "이미지"가 아니라 내용을 서술.</span></div>
+    <div class="rl no"><b>금지: AI 생성 이미지</b><span>일러스트·인물·3D 전부. "딸깍 금지" 프로젝트의 자살골.</span></div>
+    <div class="rl no"><b>금지: 정면 인물 스톡</b><span>악수·미소·헤드셋 콜센터 컷. 신뢰가 아니라 스톡 티만 남는다.</span></div>
+    <div class="rl no"><b>금지: 의미 없는 추상 카드</b><span>그라디언트 블롭·3D 도형으로 채운 카드 — 현재 목업 플레이스홀더가 이 상태다.</span></div>
+    <div class="rl no"><b>금지: 규격 밖 조판</b><span>기울기·배경색·그림자를 카드마다 다르게 — 다양함이 아니라 난잡함이 된다.</span></div>
+  </div>
+</div></section>
+
+<footer class="bt"><div class="wrap">
+  IMAGE ART DIRECTION · 2026.08.11 · 근거: 1차 미팅 §6.2 에셋 정책 · 레퍼런스-가이드.html과 세트<br><br>
+  Sources: artboard.studio · pixpa.com/blog/design-portfolio · frocksinstock.com (mockup selection guide) ·
+  imagine.art design trends 2026 · cam-strap.com 2026 photography trends · designrush.com graphic design trends
+</div></footer>
+
+</body>
+</html>

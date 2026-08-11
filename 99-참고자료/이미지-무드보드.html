@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이미지 무드보드 — 실사진 26컷, 어디에 어떤 느낌으로</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+:root {
+  --paper:#F4F1EA; --paper-2:#FBF9F4; --paper-3:#EFEDE3; --ink:#0E0E0C; --ink-2:#2A2A22;
+  --lime:#D8FF3D; --muted:#807E74; --muted-2:#A6A498; --line:#DEDCD0; --line-2:#C7C5B9;
+  --sans:"Pretendard Variable",Pretendard,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--sans);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.65;letter-spacing:-0.01em;-webkit-font-smoothing:antialiased}
+a{color:inherit} ::selection{background:var(--lime)}
+.wrap{max-width:1280px;margin:0 auto;padding:0 28px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+header.top{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+h1{margin:0 0 16px;font-size:clamp(32px,4.4vw,52px);font-weight:800;letter-spacing:-0.045em;line-height:1.1}
+h1 mark{background:var(--lime);padding:0 .08em;border-radius:8px}
+.lead{color:var(--muted);max-width:74ch;margin:0 0 20px;font-size:15.5px}
+.lead b{color:var(--ink)}
+h2{margin:0 0 8px;font-size:26px;font-weight:800;letter-spacing:-0.035em}
+.sub{color:var(--muted);margin:0 0 28px;font-size:14px}
+.sub b{color:var(--ink)}
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;background:var(--paper-3);color:var(--muted);padding:4px 10px;border-radius:999px;white-space:nowrap}
+.tag--s{background:var(--lime);color:var(--ink);font-weight:700}
+.tag--best{background:var(--ink);color:var(--lime)}
+
+/* 톤 토글 */
+.tonebar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:12px 0}
+.tonebar .in{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tonebar .lb{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--muted-2);text-transform:uppercase}
+.tbtn{font-size:12.5px;font-weight:700;padding:8px 16px;border-radius:999px;border:1px solid var(--line-2);background:transparent;cursor:pointer;font-family:var(--sans);transition:.15s}
+.tbtn.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tonebar .hint{font-family:var(--mono);font-size:10px;color:var(--muted-2);margin-left:auto}
+
+/* 그리드 */
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.m{border:1px solid var(--line);border-radius:18px;background:var(--paper-2);overflow:hidden;display:flex;flex-direction:column}
+.m .imgw{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--paper-3)}
+.m img{width:100%;height:100%;object-fit:cover;display:block;transition:filter .35s, transform .5s}
+.m:hover img{transform:scale(1.03)}
+/* 톤 모드: body 클래스로 전환 */
+body.tone-mono .m img{filter:grayscale(.92) contrast(1.06) brightness(1.03)}
+body.tone-duo  .m img{filter:grayscale(1) contrast(1.12) brightness(1.05) sepia(.5) hue-rotate(28deg) saturate(2.2)}
+body.tone-mono .m .imgw::after, body.tone-duo .m .imgw::after{content:"";position:absolute;inset:0;opacity:.4;mix-blend-mode:overlay;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.m .bd{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.m .where{display:flex;gap:6px;flex-wrap:wrap}
+.m b.t{font-size:15px;letter-spacing:-0.02em;line-height:1.4}
+.m p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.6}
+.m p strong{color:var(--ink);font-weight:700}
+.m .shoot{margin-top:auto;padding-top:10px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--muted)}
+.m .shoot::before{content:"📸 이렇게 찍기 · ";font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--muted-2)}
+
+/* 검색어 */
+.qgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.q{border:1px solid var(--line);border-radius:16px;background:var(--paper-2);padding:18px 20px}
+.q b{display:block;font-size:14.5px;letter-spacing:-0.02em;margin-bottom:6px}
+.q .links{display:flex;gap:8px;flex-wrap:wrap}
+.q a{font-family:var(--mono);font-size:10.5px;text-decoration:none;border:1px solid var(--line-2);border-radius:999px;padding:5px 12px;transition:.15s}
+.q a:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.q p{margin:8px 0 0;font-size:12px;color:var(--muted)}
+
+/* 샷리스트 */
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.sh{border:1px solid var(--line);border-radius:16px;background:var(--paper-2);padding:16px 18px;font-size:13px}
+.sh .no{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--muted-2)}
+.sh b{display:block;margin:6px 0 4px;letter-spacing:-0.02em}
+.sh span{color:var(--muted);font-size:12px;line-height:1.6;display:block}
+
+footer.bt{padding:32px 0 52px;color:var(--muted-2);font-size:11px;font-family:var(--mono);letter-spacing:.05em;line-height:1.8}
+@media(max-width:1000px){.mgrid{grid-template-columns:repeat(2,1fr)}.qgrid{grid-template-columns:1fr}.shots{grid-template-columns:1fr}}
+@media(max-width:640px){.mgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="eyebrow">Image Moodboard · 실사진 26컷 · 전수 링크 검증 완료</div>
+  <h1>이 <mark>느낌</mark>으로 찍거나 만들면 됩니다</h1>
+  <p class="lead">아래는 전부 <b>실제 사진</b>(Unsplash — 상업 사용 무료, 핫링크 검증 완료)이다. 카드마다
+  <b>어디에 들어가는지</b>(라임 배지), <b>왜 이 느낌인지</b>, <b>나중에 직접 찍을 때의 가이드</b>를 달았다.
+  상단의 톤 버튼을 누르면 26장 전체에 <b>우리 보정 규격(모노+그레인 / 라임 듀오톤)이 실시간 적용</b>된다 —
+  "아무 사진이나 가져와도 우리 톤이 되는지"를 이 자리에서 확인할 수 있다.</p>
+</div></header>
+
+<div class="tonebar"><div class="wrap in">
+  <span class="lb">Tone Preview</span>
+  <button class="tbtn on" data-tone="">원본</button>
+  <button class="tbtn" data-tone="tone-mono">모노 + 그레인 (기본 권고)</button>
+  <button class="tbtn" data-tone="tone-duo">라임 듀오톤 (커버 1~2곳)</button>
+  <span class="hint">← 누르면 26장 전체에 즉시 적용</span>
+</div></div>
+
+<!-- 그룹 1 -->
+<section><div class="wrap">
+  <div class="eyebrow">Group 1 — 화면·글로우·다크</div>
+  <h2>모니터가 주인공인 컷 → S1 히어로 · S3/S8 다크 섹션</h2>
+  <p class="sub">개발 회사의 "일하는 장면"은 얼굴이 아니라 <b>화면과 빛</b>이다. 어두운 공간 + 화면 글로우가 우리 다크 섹션(S3·S8)과 자연스럽게 이어진다.</p>
+  <div class="mgrid">
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1719400471588-575b23e27bd7?w=900&q=80&auto=format&fit=crop" alt="세 대의 모니터 앞에서 작업하는 개발자 뒷모습"></div>
+      <div class="bd"><div class="where"><span class="tag tag--best">BEST</span><span class="tag tag--s">S1 히어로</span><span class="tag tag--s">S3</span></div>
+      <b class="t">멀티 모니터 앞 뒷모습</b>
+      <p><strong>얼굴 없이 "일"만 보이는 구도.</strong> 익명이라 모델 섭외 없이 우리 팀 아무나 찍어도 대체 가능. 화면 글로우가 조명 역할.</p>
+      <div class="shoot">역광 없이 화면 빛만. 뒤에서 어깨 너머로, 주변 조도 낮추고 1/60s 내외.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1753715613373-90b1ea010731?w=900&q=80&auto=format&fit=crop" alt="여러 화면에 표시된 코드"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S3 배경</span><span class="tag tag--s">S8</span></div>
+      <b class="t">코드 화면 클로즈업</b>
+      <p>다크 섹션의 <strong>배경 텍스처</strong>로 흐리게 깔기 좋은 컷. 코드 내용이 읽히면 안 됨(우리 코드로 교체하거나 블러).</p>
+      <div class="shoot">우리 실제 에디터 화면을 어둡게 캡처 — 스톡 대신 실물이 정답인 컷.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1547658718-1cdaa0852790?w=900&q=80&auto=format&fit=crop" alt="켜진 모니터와 키보드"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S4</span><span class="tag tag--s">Insight 커버</span></div>
+      <b class="t">데스크 셋업 정면</b>
+      <p>정돈된 셋업 = <strong>"체계"의 시각 번역.</strong> S4(검증 체계) 옆 정적 1컷으로 어울림.</p>
+      <div class="shoot">데스크 위 물건 3개 이하로 치우고 정면 수평. 화면엔 우리 사이트 띄우기.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1669723008519-3b5043b5b826?w=900&q=80&auto=format&fit=crop" alt="빛나는 화면의 컴퓨터"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S8</span></div>
+      <b class="t">화면 글로우 무드</b>
+      <p>어둠 속 화면 빛 — S8(유튜브 다크 섹션)의 썸네일 사이 <strong>분위기 컷</strong>. 라임 듀오톤 적용 시 브랜드 컷이 됨(상단 버튼으로 확인).</p>
+      <div class="shoot">불 끄고 화면 밝기 최대, 노출 -1EV. 초점은 화면 모서리에.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1578091879915-33ee869e2cd7?w=900&q=80&auto=format&fit=crop" alt="얕은 초점의 모니터"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">Insight 커버</span></div>
+      <b class="t">얕은 초점 모니터</b>
+      <p>보케(초점 흐림)가 만드는 여백 — <strong>텍스트를 얹을 자리가 있는 컷.</strong> Insight 커버처럼 제목이 올라가는 곳에.</p>
+      <div class="shoot">조리개 최대 개방(F1.8~2.8), 피사체와 1m, 배경과 2m 이상.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1770159116807-9b2a7bb82294?w=900&q=80&auto=format&fit=crop" alt="밤에 노트북으로 작업하는 사람"></div>
+      <div class="bd"><div class="where"><span class="tag">보류</span></div>
+      <b class="t">(반례 겸 후보) 야간 후드 작업</b>
+      <p><strong>"해커 클리셰" 경계선의 컷.</strong> 몰입감은 좋지만 후드+어둠 조합은 수주용 사이트에서 불안 신호가 될 수 있음 — 팀 판단 필요.</p>
+      <div class="shoot">쓴다면 후드 대신 일반 복장으로 재현하고 조도만 가져오기.</div></div></div>
+
+  </div>
+</div></section>
+
+<!-- 그룹 2 -->
+<section><div class="wrap">
+  <div class="eyebrow">Group 2 — 손·키보드 클로즈업</div>
+  <h2>손이 주인공인 컷 → S3 스텝 · Insight 커버</h2>
+  <p class="sub">얼굴 없는 노동의 클로즈업 — <b>토스·우아한형제들이 쓰는 바로 그 문법.</b> 모노 보정 시 익명화되어 어떤 팀원 손이든 소재가 된다.</p>
+  <div class="mgrid">
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1772115428479-9045bc0c2a3d?w=900&q=80&auto=format&fit=crop" alt="키보드 타이핑 손 클로즈업"></div>
+      <div class="bd"><div class="where"><span class="tag tag--best">BEST</span><span class="tag tag--s">S3 개발 스텝</span></div>
+      <b class="t">타이핑 클로즈업 (근접)</b>
+      <p><strong>S3 "개발" 스텝 카드의 배경 1순위.</strong> 프레임에 손+키보드만 — 정보가 아니라 리듬이 찍힌 컷.</p>
+      <div class="shoot">측면 45°, 손목까지만. 셔터 1/125s로 손가락 약간의 블러 허용 — 정지보다 생동감.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1613988753173-8db625c972c5?w=900&q=80&auto=format&fit=crop" alt="검은 키보드 위의 손"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S3</span><span class="tag tag--s">Insight 커버</span></div>
+      <b class="t">다크 키보드 + 손</b>
+      <p>어두운 배경이라 <strong>다크 섹션에 이질감 없이 얹힘.</strong> 듀오톤 적용 시 가장 예쁘게 변하는 컷 중 하나(버튼으로 확인).</p>
+      <div class="shoot">검은 데스크매트 위에서 탑다운 약간 비껴서.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1651248340514-f5822cb997c2?w=900&q=80&auto=format&fit=crop" alt="키보드 위의 손"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">Insight 커버</span></div>
+      <b class="t">밝은 톤 타이핑</b>
+      <p>밝은 배경 버전 — <strong>라이트 지면(Insight 목록)의 커버</strong>로. 같은 소재를 밝음/어둠 두 톤으로 확보해두면 지면에 맞춰 골라 쓴다.</p>
+      <div class="shoot">창가 자연광, 오전 10~11시. 흰 데스크 위.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1461773518188-b3e86f98242f?w=900&q=80&auto=format&fit=crop" alt="애플 키보드에 타이핑"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S5 hover</span></div>
+      <b class="t">미니멀 키보드 탑다운</b>
+      <p>여백이 많아 <strong>소형으로 잘라 써도 살아있는 컷</strong> — S5 매칭 카드 hover 시 등장하는 작은 이미지 용도.</p>
+      <div class="shoot">완전 탑다운(90°), 키보드를 프레임 1/3에 배치.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1581462050168-00c97ee89d1f?w=900&q=80&auto=format&fit=crop" alt="흑백 노트북 작업"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">Insight 커버</span></div>
+      <b class="t">이미 흑백인 작업 컷</b>
+      <p>원본부터 흑백 — <strong>우리 모노+그레인 규격의 완성형 미리보기.</strong> 이 느낌이 사이트 전체 사진 톤의 목표점이다.</p>
+      <div class="shoot">촬영은 컬러로 하고 보정에서 흑백 — 원본 보존.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1508780709619-79562169bc64?w=900&q=80&auto=format&fit=crop" alt="노트북으로 작업하는 사람"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S2 분위기</span></div>
+      <b class="t">노트북 작업 미드샷</b>
+      <p>손보다 조금 넓은 프레임 — 클로즈업만 반복되면 단조로우니 <strong>중간 거리 컷을 사이에 끼워</strong> 리듬을 만든다.</p>
+      <div class="shoot">테이블 반대편에서 눈높이보다 낮게. 얼굴은 프레임 밖.</div></div></div>
+
+  </div>
+</div></section>
+
+<!-- 그룹 3 -->
+<section><div class="wrap">
+  <div class="eyebrow">Group 3 — 기획·화이트보드·문서</div>
+  <h2>과정이 보이는 컷 → S3 기획 스텝 · S4 검증 체계</h2>
+  <p class="sub">"일하는 방식"이 소구점인 우리에게 가장 전략적인 그룹. <b>완성물이 아니라 과정의 물증</b>을 찍는다.</p>
+  <div class="mgrid">
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1532622785990-d2c36a76f5a6?w=900&q=80&auto=format&fit=crop" alt="화이트보드에 함께 그리는 두 사람"></div>
+      <div class="bd"><div class="where"><span class="tag tag--best">BEST</span><span class="tag tag--s">S3 기획 스텝</span></div>
+      <b class="t">화이트보드 앞 두 사람</b>
+      <p><strong>S3 "기획" 스텝의 정답 컷.</strong> 손+보드+마커만 보이고 얼굴은 없거나 옆모습 — 협업이 연출 없이 찍힘.</p>
+      <div class="shoot">보드에 실제 우리 IA 다이어그램을 그려놓고 촬영 — 소품이 곧 콘텐츠.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1590103514966-5e2a11c13e21?w=900&q=80&auto=format&fit=crop" alt="화이트보드에 쓰는 사람"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S3</span><span class="tag tag--s">Insight 커버</span></div>
+      <b class="t">보드에 쓰는 순간</b>
+      <p>단독 버전 — 마커 쥔 손과 판서 궤적. <strong>"설계한다"는 동사가 찍힌 컷.</strong></p>
+      <div class="shoot">판서 내용이 3단어 이상 읽히게. 우리 용어(IA·검수·슬러그)면 더 좋다.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=900&q=80&auto=format&fit=crop" alt="종이에 쓰는 손"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S3 검수 스텝</span></div>
+      <b class="t">종이 위 체크·필기</b>
+      <p><strong>S3 "검수" 스텝용.</strong> 체크리스트에 펜 얹힌 구도 — 문서 스냅샷(타입 D)과 실사진의 중간 지점.</p>
+      <div class="shoot">실제 검수보고서 출력물 + 펜. 탑다운, 문서 기울기 1~2°.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1497409988347-cbfaac2f0b12?w=900&q=80&auto=format&fit=crop" alt="화이트보드"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S4 배경</span></div>
+      <b class="t">빈 보드·여백</b>
+      <p>정보 없는 미니멀 컷 — <strong>정지 섹션(S4)의 숨 쉬는 배경.</strong> 콘텐츠와 경쟁하지 않는 이미지도 필요하다.</p>
+      <div class="shoot">벽·보드·책상 모서리 같은 "아무것도 아닌 곳"을 정면 수평으로.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1620275765334-4ed948bb4502?w=900&q=80&auto=format&fit=crop" alt="노트 위의 펜"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">Insight 커버</span></div>
+      <b class="t">노트+펜 플랫레이</b>
+      <p>Insight "일하는 방식" 카테고리 커버로 반복 사용 가능한 <strong>시리즈 규격 후보.</strong> 같은 구도로 소품만 바꾸면 커버가 계속 나온다.</p>
+      <div class="shoot">탑다운, 좌상단 여백 40% 비우기(제목 자리). 소품 2개 이하.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1523635050353-f5b60dafa07c?w=900&q=80&auto=format&fit=crop" alt="스프링 노트와 펜"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">Insight 커버</span></div>
+      <b class="t">노트 시리즈 변주</b>
+      <p>위 컷과 짝 — <strong>커버 시리즈의 2번째 변주.</strong> 시리즈감이 곧 브랜드 일관성.</p>
+      <div class="shoot">같은 조명·같은 각도 유지, 노트 색만 교체.</div></div></div>
+
+  </div>
+</div></section>
+
+<!-- 그룹 4 -->
+<section><div class="wrap">
+  <div class="eyebrow">Group 4 — 협업·공간</div>
+  <h2>사람이 배경인 컷 → S4 신뢰 · 회사 소개류</h2>
+  <p class="sub">얼굴 정면은 여전히 금지. <b>흐릿한 사람 + 선명한 공간</b>이 "실제로 일하는 조직"을 증언한다.</p>
+  <div class="mgrid">
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1561198929-06611095c95d?w=900&q=80&auto=format&fit=crop" alt="그레이스케일 사무 공간과 사람들"></div>
+      <div class="bd"><div class="where"><span class="tag tag--best">BEST</span><span class="tag tag--s">S4</span></div>
+      <b class="t">흑백 오피스 군상</b>
+      <p>원본부터 흑백 — <strong>모노 규격과 완벽 일치.</strong> 사람이 있는데 아무도 특정되지 않는, 우리가 원하는 딱 그 거리감.</p>
+      <div class="shoot">유리벽 너머·계단 위 등 한 겹 거친 시점에서. 움직임 블러 환영.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1770943558988-2c605d6bd5a7?w=900&q=80&auto=format&fit=crop" alt="큰 창의 현대 사무실"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S4</span></div>
+      <b class="t">채광 좋은 작업 공간</b>
+      <p>공간이 주인공, 사람은 소품 — <strong>"환경이 갖춰져 있다"</strong>는 신호. 밝은 지면(S4)에 어울림.</p>
+      <div class="shoot">광각으로 창을 프레임에 크게. 오후 3~4시 사광.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1774600134168-b9ebd714e4e1?w=900&q=80&auto=format&fit=crop" alt="노트북으로 협업하는 팀"></div>
+      <div class="bd"><div class="where"><span class="tag">보조</span></div>
+      <b class="t">테이블 협업 (경계선)</b>
+      <p><strong>스톡 티 경계선의 컷</strong> — 쓴다면 반드시 모노 보정 + 소형 배치로. 원본 그대로 크게 걸면 바로 스톡처럼 보인다(버튼으로 비교해보라).</p>
+      <div class="shoot">직접 찍을 땐 "회의하는 척" 금지 — 실제 회의 중에 문가에서 한 컷.</div></div></div>
+
+  </div>
+</div></section>
+
+<!-- 그룹 5: 데스크 -->
+<section><div class="wrap">
+  <div class="eyebrow">Group 5 — 데스크·기기 정물</div>
+  <h2>기기 정물 컷 → P-03 상세 · 스크린샷 합성 베이스</h2>
+  <p class="sub">화면이 비어있는 기기 컷은 <b>우리 UI 스크린샷을 합성해 넣는 베이스</b>로 쓴다 — 찍은 사진이 목업 프레임이 되는 것.</p>
+  <div class="mgrid">
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1588200908342-23b585c03e26?w=900&q=80&auto=format&fit=crop" alt="나무 테이블 위 iMac"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">P-03 히어로</span></div>
+      <b class="t">데스크 위 모니터 정물</b>
+      <p>화면에 <strong>우리 결과물을 합성</strong>하면 Work 상세 히어로가 된다. 브라우저 프레임(CSS)보다 물성 있는 버전.</p>
+      <div class="shoot">화면 정면 수평 필수(합성 왜곡 방지). 반사 없는 각도.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1586804186557-8939a72b2239?w=900&q=80&auto=format&fit=crop" alt="테이블 위 맥북"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">P-03 본문</span></div>
+      <b class="t">노트북 사선 정물</b>
+      <p>본문 중간의 <strong>호흡 컷 + 합성 베이스.</strong> 사선 각이라 화면 합성 시 원근 변형 필요 — shots.so가 자동 처리.</p>
+      <div class="shoot">45° 사선, 자연광. 키보드에 살짝 초점.</div></div></div>
+
+    <div class="m"><div class="imgw"><img loading="lazy" src="https://images.unsplash.com/photo-1585792180666-f7347c490ee2?w=900&q=80&auto=format&fit=crop" alt="흑백 노트북"></div>
+      <div class="bd"><div class="where"><span class="tag tag--s">S7 인접</span></div>
+      <b class="t">흑백 기기 정물</b>
+      <p>읽는 영역(S7 인접) 옆에 놓아도 <strong>시선을 뺏지 않는 조용한 컷.</strong> 이미지가 필요하지만 조용해야 하는 자리용.</p>
+      <div class="shoot">그림자를 부드럽게(커튼 확산광). 대비 낮게 찍고 보정에서 올리기.</div></div></div>
+
+  </div>
+</div></section>
+
+<!-- 검색어 -->
+<section><div class="wrap">
+  <div class="eyebrow">Keep Hunting — 핀터레스트·구글 검색 링크</div>
+  <h2>같은 느낌 더 찾는 검색어 (클릭하면 바로 열림)</h2>
+  <p class="sub">위 26컷과 같은 결의 이미지를 더 모을 때. <b>검색어 자체가 아트디렉션</b>이다 — 이대로 검색하면 같은 무드가 나온다.</p>
+  <div class="qgrid">
+    <div class="q"><b>화면·글로우 (Group 1)</b>
+      <div class="links">
+        <a href="https://www.pinterest.com/search/pins/?q=developer%20workspace%20dark%20moody" target="_blank">Pinterest: developer workspace dark moody</a>
+        <a href="https://www.pinterest.com/search/pins/?q=monitor%20glow%20aesthetic%20desk" target="_blank">Pinterest: monitor glow aesthetic</a>
+        <a href="https://www.google.com/search?q=developer+desk+setup+dark+photography&udm=2" target="_blank">Google: developer desk dark photography</a>
+      </div><p>피할 것: 네온 RGB 게이밍 셋업 — 우리 톤 아님</p></div>
+    <div class="q"><b>손·작업 클로즈업 (Group 2)</b>
+      <div class="links">
+        <a href="https://www.pinterest.com/search/pins/?q=hands%20typing%20keyboard%20black%20and%20white" target="_blank">Pinterest: hands typing b&w</a>
+        <a href="https://www.pinterest.com/search/pins/?q=craftsmanship%20hands%20closeup%20editorial" target="_blank">Pinterest: craftsmanship hands editorial</a>
+        <a href="https://www.google.com/search?q=hands+keyboard+closeup+editorial+photography&udm=2" target="_blank">Google: hands keyboard editorial</a>
+      </div><p>키워드에 editorial·b&w를 붙이면 스톡 티가 걸러진다</p></div>
+    <div class="q"><b>기획·과정 (Group 3)</b>
+      <div class="links">
+        <a href="https://www.pinterest.com/search/pins/?q=whiteboard%20wireframe%20sketch%20session" target="_blank">Pinterest: whiteboard wireframe session</a>
+        <a href="https://www.pinterest.com/search/pins/?q=design%20process%20documentation%20flat%20lay" target="_blank">Pinterest: process documentation flat lay</a>
+        <a href="https://www.google.com/search?q=ux+wireframe+whiteboard+real+photo&udm=2" target="_blank">Google: wireframe whiteboard real</a>
+      </div><p>"real photo"를 붙여 일러스트·목업 이미지를 배제</p></div>
+    <div class="q"><b>썸네일·조판 규격 (타입 B 레퍼런스)</b>
+      <div class="links">
+        <a href="https://www.pinterest.com/search/pins/?q=behance%20case%20study%20cover%20layout" target="_blank">Pinterest: behance case study cover</a>
+        <a href="https://www.pinterest.com/search/pins/?q=portfolio%20thumbnail%20grid%20consistent" target="_blank">Pinterest: portfolio thumbnail grid</a>
+        <a href="https://www.behance.net/search/projects/web%20design%20case%20study" target="_blank">Behance: web design case study</a>
+      </div><p>사진이 아니라 "조판 규격"을 보는 검색 — Work 썸네일용</p></div>
+  </div>
+</div></section>
+
+<!-- 샷리스트 -->
+<section><div class="wrap">
+  <div class="eyebrow">Shot List — 나중에 직접 찍을 때</div>
+  <h2>자체 촬영 샷리스트 9컷 (반나절 분량)</h2>
+  <p class="sub">위 무드를 우리 것으로 재현하는 최소 촬영 목록. 장비는 스마트폰이면 충분 — <b>톤은 보정 규격이 만든다.</b></p>
+  <div class="shots">
+    <div class="sh"><span class="no">SHOT 01</span><b>멀티 모니터 뒷모습</b><span>팀원 아무나, 어깨 너머. 화면에 실제 작업물. → S1·S3</span></div>
+    <div class="sh"><span class="no">SHOT 02</span><b>타이핑 클로즈업 2톤</b><span>같은 장면을 밝은 곳/어두운 곳에서 각 1컷. → S3·Insight</span></div>
+    <div class="sh"><span class="no">SHOT 03</span><b>화이트보드에 IA 그리기</b><span>실제 IA 다이어그램 판서 + 마커 쥔 손. → S3 기획</span></div>
+    <div class="sh"><span class="no">SHOT 04</span><b>검수 체크리스트+펜</b><span>실제 문서 출력물 탑다운. → S3 검수</span></div>
+    <div class="sh"><span class="no">SHOT 05</span><b>데스크 정물 정면</b><span>화면 수평 정면 — 합성 베이스용. → P-03</span></div>
+    <div class="sh"><span class="no">SHOT 06</span><b>노트+펜 커버 시리즈 3변주</b><span>같은 구도, 소품만 교체. 좌상단 40% 여백. → Insight 커버</span></div>
+    <div class="sh"><span class="no">SHOT 07</span><b>회의 중 문가 한 컷</b><span>연출 금지, 실제 회의를 유리 너머로. → S4</span></div>
+    <div class="sh"><span class="no">SHOT 08</span><b>아무것도 아닌 곳</b><span>벽·보드 모서리·빈 책상 — 조용한 배경 재고용. → S4·S7</span></div>
+    <div class="sh"><span class="no">SHOT 09</span><b>모든 컷 컬러 원본 보존</b><span>보정(모노+그레인)은 CSS/후반에서 — 원본은 항상 컬러로.</span></div>
+  </div>
+</div></section>
+
+<footer class="bt"><div class="wrap">
+  IMAGE MOODBOARD · 2026.08.11 · 사진 출처: Unsplash (상업 사용 무료 · 26컷 전수 HTTP 200 검증) ·
+  세트 문서: 이미지-아트디렉션.html(처리 규격) · 레퍼런스-가이드.html(레이아웃)<br>
+  톤 버튼의 필터 값 = 아트디렉션 가이드 ③ 규격과 동일 — 목업에 그대로 이식 가능
+</div></footer>
+
+<script>
+document.querySelectorAll('.tbtn').forEach(function (b) {
+  b.addEventListener('click', function () {
+    document.querySelectorAll('.tbtn').forEach(function (x) { x.classList.remove('on'); });
+    b.classList.add('on');
+    document.body.className = b.dataset.tone;
+  });
+});
+</script>
+</body>
+</html>

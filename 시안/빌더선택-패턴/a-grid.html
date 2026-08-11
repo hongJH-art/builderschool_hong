@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>패턴 A — 카드 그리드 + 태그 (~15명)</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+:root { --paper:#F4F1EA; --paper2:#FBF9F4; --ink:#0E0E0C; --lime:#D8FF3D; --muted:#807E74; --muted2:#A6A498;
+  --line:#DEDCD0; --mono:"JetBrains Mono",monospace; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:"Pretendard Variable",Pretendard,sans-serif; background:var(--paper); color:var(--ink);
+  line-height:1.6; letter-spacing:-0.01em; -webkit-font-smoothing:antialiased; }
+.wrap { max-width:1180px; margin:0 auto; padding:70px 32px 110px; }
+.back { text-decoration:none; color:var(--muted); font-size:14px; font-weight:600; }
+.back:hover { color:var(--ink); }
+h1 { font-size:clamp(32px,4vw,46px); font-weight:800; letter-spacing:-0.05em; margin:22px 0 8px; }
+.sub { color:var(--muted); font-size:17px; margin:0 0 14px; }
+.note { display:inline-block; background:var(--ink); color:var(--lime); font-size:13px; font-weight:700;
+  border-radius:999px; padding:6px 16px; margin-bottom:44px; }
+.grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+@media (max-width:1000px){ .grid { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){ .grid { grid-template-columns:1fr; } }
+.bc { background:var(--paper2); border:1px solid var(--line); border-radius:20px; overflow:hidden;
+  text-decoration:none; color:inherit; display:block; transition:.18s; cursor:pointer; }
+.bc:hover { border-color:var(--ink); transform:translateY(-3px); box-shadow:0 16px 40px rgba(14,14,12,.1); }
+.bc .face { aspect-ratio:4/5; display:grid; place-items:center; font-size:56px; font-weight:800; color:#fff;
+  letter-spacing:-0.04em; position:relative; }
+.bc .face small { position:absolute; top:14px; left:14px; font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+  color:rgba(255,255,255,.75); }
+.bc .bd { padding:18px 20px 20px; }
+.bc b { display:block; font-size:18px; font-weight:800; letter-spacing:-0.03em; }
+.bc .role { color:var(--muted); font-size:14.5px; margin:2px 0 12px; }
+.tags { display:flex; flex-wrap:wrap; gap:6px; }
+.tag { font-family:var(--mono); font-size:11px; letter-spacing:.06em; background:#EFEDE3; color:var(--muted);
+  padding:5px 11px; border-radius:999px; }
+.tag.hot { background:var(--lime); color:var(--ink); font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← 패턴 목록</a>
+  <h1>검증된 빌더</h1>
+  <p class="sub">전문분야 태그로 한눈에 훑고, 카드를 눌러 프로필과 작업물을 봅니다.</p>
+  <span class="note">패턴 A · ~15명 규모 — 전원 노출 + 태그 스캔</span>
+
+  <div class="grid" id="g"></div>
+</div>
+<script>
+var builders = [
+  ['조쉬','AI 서비스 · 풀스택',['AI 에이전트','Next.js','LLM 연동'],'#5B6D4E',1],
+  ['유나','AI 서비스 · 프론트엔드',['챗봇','React','프롬프트 설계'],'#3E4A5E',1],
+  ['도현','플랫폼 · 백엔드',['관리자 콘솔','DB 설계','권한 설계'],'#6B4E3E',0],
+  ['리아','랜딩 · 브랜드',['랜딩 페이지','전환 트래킹','인터랙션'],'#4E5E56',1],
+  ['민재','앱 · 크로스플랫폼',['React Native','토스 미니앱','결제 연동'],'#5E4E6B',0],
+  ['서연','랜딩 · 콘텐츠',['에디토리얼','CMS','SEO'],'#6B5E3E',0],
+  ['태오','플랫폼 · 풀스택',['SaaS','구독 결제','대시보드'],'#3E5E5E',1],
+  ['하린','AI 서비스 · 데이터',['RAG','문서 검색','파이프라인'],'#5E3E4A',0],
+  ['준서','앱 · 네이티브',['iOS','푸시 설계','스토어 심사'],'#4A5E3E',0],
+  ['소은','랜딩 · 마케팅',['A/B 테스트','GA4','퍼널 설계'],'#5E564E',0],
+  ['건우','플랫폼 · 인프라',['배포 자동화','모니터링','보안'],'#464E5E',0],
+  ['예진','AI 서비스 · UX',['AI UX','온보딩','프로토타이핑'],'#5E4E56',1]
+];
+document.getElementById('g').innerHTML = builders.map(function(b){
+  return '<a class="bc" href="#">'
+    + '<div class="face" style="background:'+b[3]+'"><small>BUILDER</small>'+b[0][0]+'</div>'
+    + '<div class="bd"><b>빌더 '+b[0]+'</b><div class="role">'+b[1]+'</div>'
+    + '<div class="tags">'+b[2].map(function(t,i){return '<span class="tag'+(i===0&&b[4]?' hot':'')+'">'+t+'</span>';}).join('')+'</div>'
+    + '</div></a>';
+}).join('');
+</script>
+</body>
+</html>

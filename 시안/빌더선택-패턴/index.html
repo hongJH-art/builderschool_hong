@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>빌더 선택 UX — 규모별 3패턴 샘플</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
+:root { --paper:#F4F1EA; --ink:#0E0E0C; --lime:#D8FF3D; --muted:#807E74; --line:#DEDCD0; }
+* { box-sizing: border-box; }
+body { margin:0; font-family:"Pretendard Variable",Pretendard,sans-serif; background:var(--paper); color:var(--ink);
+  line-height:1.65; letter-spacing:-0.01em; -webkit-font-smoothing:antialiased; }
+.wrap { max-width:880px; margin:0 auto; padding:80px 32px 100px; }
+h1 { font-size:40px; font-weight:800; letter-spacing:-0.05em; margin:0 0 10px; }
+.sub { color:var(--muted); font-size:17px; margin:0 0 52px; }
+a.card { display:block; text-decoration:none; color:inherit; background:#FBF9F4; border:1px solid var(--line);
+  border-radius:20px; padding:30px 34px; margin-bottom:18px; transition:.15s; }
+a.card:hover { border-color:var(--ink); transform:translateY(-2px); }
+.card .k { display:inline-block; font-size:12px; font-weight:800; background:var(--ink); color:var(--lime);
+  padding:4px 12px; border-radius:999px; margin-bottom:12px; letter-spacing:.02em; }
+.card h2 { margin:0 0 6px; font-size:23px; font-weight:800; letter-spacing:-0.035em; }
+.card h2 span { color:var(--muted); font-weight:600; font-size:16px; margin-left:8px; }
+.card p { margin:0; color:var(--muted); font-size:15.5px; }
+.card .go { margin-top:12px; font-weight:700; font-size:15px; }
+.card .go::after { content:" →"; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>빌더 선택 UX — 규모별 3패턴</h1>
+  <p class="sub">빌더 수가 늘어날 때 Work 페이지가 어떻게 진화해야 하는지, 단계별 샘플입니다.</p>
+
+  <a class="card" href="a-grid.html">
+    <span class="k">패턴 A</span>
+    <h2>카드 그리드 + 전문분야 태그 <span>~15명</span></h2>
+    <p>전원 노출이 가능한 규모. 포트레이트 카드에 전문분야 태그를 붙여 한눈에 훑게 합니다.</p>
+    <div class="go">샘플 보기</div>
+  </a>
+
+  <a class="card" href="b-filter.html">
+    <span class="k">패턴 B</span>
+    <h2>패싯 필터 + 작업물 우선 탐색 <span>15~40명</span></h2>
+    <p>사람이 아니라 작업물이 입구. 필터로 좁히고, 마음에 드는 결과물에서 담당 빌더로 이어집니다.</p>
+    <div class="go">샘플 보기</div>
+  </a>
+
+  <a class="card" href="c-matching.html">
+    <span class="k">패턴 C</span>
+    <h2>큐레이션 + 매칭 유도 <span>40명+</span></h2>
+    <p>전원 나열을 포기하는 규모. 대표 빌더만 보여주고, 3문항 매칭으로 추천을 받게 합니다.</p>
+    <div class="go">샘플 보기</div>
+  </a>
+
+  <a class="card" href="d-hybrid.html">
+    <span class="k">패턴 D ★</span>
+    <h2>하이브리드 — 탐색 + 매칭 <span>B+C 결합</span></h2>
+    <p>직접 둘러보는 사람은 필터 그리드로, 고르기 어려운 사람은 30초 매칭으로. 두 동선을 한 페이지에.</p>
+    <div class="go">샘플 보기</div>
+  </a>
+
+  <a class="card" href="e-boxed.html">
+    <span class="k">패턴 E</span>
+    <h2>박스 패널 분리 — 벤토형 <span>D의 변형</span></h2>
+    <p>각 섹션을 큰 라운드 박스로 감싸 경계를 명확하게. 톤이 다른 두 패널이 한눈에 구분됩니다.</p>
+    <div class="go">샘플 보기</div>
+  </a>
+</div>
+</body>
+</html>

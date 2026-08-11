@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 인물 이미지 프롬프트 팩 v2 — 밝고 사람다운, 신뢰의 얼굴</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+:root {
+  --paper:#F4F1EA; --paper-2:#FBF9F4; --paper-3:#EFEDE3; --ink:#0E0E0C; --ink-2:#2A2A22;
+  --lime:#D8FF3D; --muted:#807E74; --muted-2:#A6A498; --line:#DEDCD0; --line-2:#C7C5B9;
+  --red:#c0392b;
+  --sans:"Pretendard Variable",Pretendard,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--sans);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.65;letter-spacing:-0.01em;-webkit-font-smoothing:antialiased}
+a{color:inherit} ::selection{background:var(--lime)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+header.top{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+h1{margin:0 0 16px;font-size:clamp(30px,4.2vw,50px);font-weight:800;letter-spacing:-0.045em;line-height:1.12}
+h1 mark{background:var(--lime);padding:0 .08em;border-radius:8px}
+.lead{color:var(--muted);max-width:76ch;margin:0;font-size:15.5px}
+.lead b{color:var(--ink)}
+h2{margin:0 0 8px;font-size:25px;font-weight:800;letter-spacing:-0.035em}
+h3{margin:0 0 12px;font-size:17px;font-weight:800;letter-spacing:-0.025em}
+.sub{color:var(--muted);margin:0 0 28px;font-size:14px}
+.sub b{color:var(--ink)}
+section{padding:52px 0;border-bottom:1px solid var(--line)}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;background:var(--paper-3);color:var(--muted);padding:4px 10px;border-radius:999px;white-space:nowrap}
+.tag--s{background:var(--lime);color:var(--ink);font-weight:700}
+.tag--x{background:var(--red);color:#fff}
+.tag--ok{background:var(--ink);color:var(--lime)}
+
+/* 컨셉 비교 */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.vs .col{border:1px solid var(--line);border-radius:18px;padding:22px 24px;background:var(--paper-2)}
+.vs .col.old{opacity:.6}
+.vs .col .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--muted-2);text-transform:uppercase;display:block;margin-bottom:10px}
+.vs .col b{font-size:16px;letter-spacing:-0.02em}
+.vs .col p{margin:6px 0 0;font-size:13px;color:var(--muted);line-height:1.65}
+.msg{border:2px solid var(--ink);border-radius:18px;padding:22px 26px;background:var(--paper-2);font-size:16px;line-height:1.7}
+.msg b{background:var(--lime);padding:0 .15em;border-radius:5px}
+
+/* 톤 데모 */
+.duo{display:flex;gap:14px;margin-top:20px}
+.duo figure{margin:0;text-align:center;flex:1}
+.duo .img{aspect-ratio:4/3;border-radius:14px;background-size:cover;background-position:center;border:1px solid var(--line)}
+.duo figcaption{font-family:var(--mono);font-size:9.5px;color:var(--muted-2);margin-top:8px;letter-spacing:.06em}
+.duo figcaption b{color:var(--ink);font-family:var(--sans);font-size:12px;letter-spacing:-0.01em;display:block;margin-bottom:2px}
+.f-nat{filter:brightness(1.06) contrast(.97) saturate(1.06) sepia(.06)}
+.f-over{filter:brightness(1.15) contrast(1.25) saturate(1.7)}
+
+/* 조건 카드 */
+.conds{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cd{border:1px solid var(--line);border-radius:16px;background:var(--paper-2);padding:16px 18px;font-size:13px}
+.cd b{display:block;margin-bottom:4px;letter-spacing:-0.02em}
+.cd span{color:var(--muted);font-size:12.5px;line-height:1.6;display:block}
+.cd.x{border-color:#c0392b33;background:#c0392b0a}
+.cd.x b{color:var(--red)}
+
+/* 프롬프트 카드 */
+.pcards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pc{border:1px solid var(--line);border-radius:20px;background:var(--paper-2);overflow:hidden;display:flex;flex-direction:column}
+.pc .hd{padding:20px 22px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pc .hd b{font-size:17px;letter-spacing:-0.03em}
+.pc .desc{padding:8px 22px 0;margin:0;font-size:12.5px;color:var(--muted);line-height:1.65}
+.pc .desc strong{color:var(--ink)}
+.pc .story{margin:10px 22px 0;padding:10px 14px;background:var(--paper-3);border-radius:10px;font-size:12px;line-height:1.6}
+.pc .story::before{content:"이 컷이 하는 말 · ";font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--muted-2)}
+.pc pre{margin:14px 22px 0;background:var(--ink);color:#e8e6dc;border-radius:12px;padding:16px 18px;font-family:var(--mono);font-size:11px;line-height:1.7;white-space:pre-wrap;word-break:break-word;position:relative}
+.pc pre .lbl{position:absolute;top:-8px;left:14px;background:var(--lime);color:var(--ink);font-size:8.5px;letter-spacing:.12em;padding:2px 8px;border-radius:999px;font-weight:700}
+.pc pre.neg{background:#2a1512;color:#e8c5bd}
+.pc pre.neg .lbl{background:var(--red);color:#fff}
+.pc pre.gpt{background:#12241a;color:#d7ead9}
+.pc pre.gpt .lbl{background:#3fa66a;color:#fff}
+.pc .copy{margin:10px 22px 0;align-self:flex-start;font-family:var(--mono);font-size:10px;letter-spacing:.08em;border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:6px 14px;cursor:pointer;transition:.15s}
+.pc .copy:hover{background:var(--ink);color:var(--paper)}
+.pc .copy.done{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+.pc .ft{padding:14px 22px 20px;margin-top:auto;font-size:11.5px;color:var(--muted)}
+.pc .ft::before{content:"셋팅 · ";font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--muted-2)}
+
+/* 실사 스트립 */
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.s{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper-2)}
+.s img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;filter:brightness(1.05) contrast(.98) saturate(1.05) sepia(.05)}
+.s .bd{padding:12px 16px 14px}
+.s b{font-size:13.5px;letter-spacing:-0.02em;display:block;margin-bottom:3px}
+.s p{margin:0;font-size:11.5px;color:var(--muted);line-height:1.55}
+
+footer.bt{padding:32px 0 52px;color:var(--muted-2);font-size:11px;font-family:var(--mono);letter-spacing:.05em;line-height:1.8}
+@media(max-width:960px){.pcards{grid-template-columns:1fr}.conds{grid-template-columns:1fr}.vs{grid-template-columns:1fr}.strip{grid-template-columns:1fr}.duo{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="eyebrow">AI Image Prompt Pack v2 · 밝은 자연광 · 2026.08.11</div>
+  <h1>코딩은 AI가 해도,<br><mark>하는 건 사람</mark>입니다</h1>
+  <p class="lead">v1(어두운 다큐 톤)은 기각 — 방향이 바뀌었다. 이 사이트의 인물 이미지가 할 일은 하나다:
+  <b>"바이브코딩은 AI로 하지만, 그걸 다루는 건 검증된 진짜 사람"</b>이라는 메시지.
+  그래서 v2의 키워드는 <b>밝은 자연광 · 사람의 온기 · 전문가의 신뢰감</b>이다.
+  연출로 예쁘게 만드는 게 아니라 — <b>자연스럽게 찍힌 순간을 고화질 그레이딩으로 정돈</b>하는 방식이다.</p>
+</div></header>
+
+<!-- ① 방향 전환 -->
+<section><div class="wrap">
+  <div class="eyebrow">Direction Change</div>
+  <h2>무엇이 바뀌었나</h2>
+  <div class="vs">
+    <div class="col old"><span class="k">v1 — 기각</span><b>어두운 다큐멘터리</b>
+      <p>모니터 불빛, 야근, 그림자 속 실루엣. 리얼하지만 <strong>무겁고 폐쇄적</strong> — "사람"이 아니라 "노동"이 찍혔다.</p></div>
+    <div class="col"><span class="k">v2 — 현재 방향</span><b>밝은 자연광의 전문가</b>
+      <p>창가의 오전 빛, 동료와 대화하며 자연스럽게 웃는 옆모습, 정돈됐지만 살아있는 작업 공간. <strong>믿고 맡길 수 있는 사람의 인상.</strong></p></div>
+  </div>
+  <div class="msg">모든 컷의 심사 기준은 한 문장 — <b>"이 사람들에게 맡기고 싶다"</b>는 느낌이 드는가.
+  기술(AI·모니터·코드)은 배경으로 밀고, <b>사람의 태도(경청·집중·미소·설명하는 손짓)</b>를 주인공으로 놓는다.</div>
+</div></section>
+
+<!-- ② 톤 규격 -->
+<section><div class="wrap">
+  <div class="eyebrow">Tone — "자연스럽게 찍고, 그레이딩으로 정돈"</div>
+  <h2>보정 규격: 내추럴 하이키 그레이딩</h2>
+  <p class="sub">필터로 분위기를 만드는 게 아니라 <b>잘 찍힌 사진처럼 정돈만 한다.</b> 아래 3단 비교 — 가운데가 우리 규격이다.</p>
+  <div class="duo">
+    <figure><div class="img" style="background-image:url('https://images.unsplash.com/photo-1532622785990-d2c36a76f5a6?w=700&q=80&auto=format')"></div><figcaption><b>원본</b>RAW — 약간 밋밋해도 그대로 둔다</figcaption></figure>
+    <figure><div class="img f-nat" style="background-image:url('https://images.unsplash.com/photo-1532622785990-d2c36a76f5a6?w=700&q=80&auto=format')"></div><figcaption><b>✅ 내추럴 하이키 (우리 규격)</b>brightness +6 · contrast −3 · saturate +6 · 웜 +6</figcaption></figure>
+    <figure><div class="img f-over" style="background-image:url('https://images.unsplash.com/photo-1532622785990-d2c36a76f5a6?w=700&q=80&auto=format')"></div><figcaption><b>❌ 과보정 (금지)</b>쨍한 채도·대비 — 광고 스톡의 길</figcaption></figure>
+  </div>
+  <div class="conds" style="margin-top:20px">
+    <div class="cd"><b>빛: 창가 자연광, 오전 10~14시</b><span>부드러운 확산광. 그림자는 옅게 살린다 — 그림자 0은 스튜디오 티.</span></div>
+    <div class="cd"><b>색: 웜 화이트, 채도 살짝만</b><span>흰 벽이 미색으로 기울 정도의 웜톤. 피부는 보정하지 않는다.</span></div>
+    <div class="cd"><b>질감: 고화질 + 미세 그레인 3~5%</b><span>선명하되 디지털 광택은 죽인다. v1의 강한 필름 그레인은 폐기.</span></div>
+    <div class="cd"><b>공간: 밝고 정돈, 그러나 살아있게</b><span>커피잔·노트·포스트잇은 그대로. "치우지 않는다" 원칙은 유지하되 밝은 공간에서.</span></div>
+    <div class="cd"><b>표정: 카메라 아닌 곳을 향한 미소</b><span>동료·화면·화이트보드를 보며 자연스럽게 — 카메라 응시 금지는 유지.</span></div>
+    <div class="cd"><b>복장: 단정한 캐주얼</b><span>정장 ❌ 후드 ❌ — 셔츠·니트·맨투맨. "믿을 수 있는 또래 전문가".</span></div>
+  </div>
+</div></section>
+
+<!-- ③ 안전 조건 (유지) -->
+<section><div class="wrap">
+  <div class="eyebrow">Safety — v1의 안전 조건은 그대로 유지</div>
+  <h2>들키지 않는 조건 (변경 없음)</h2>
+  <div class="conds">
+    <div class="cd"><b>얼굴: 옆모습·¾ 후면·시선 이탈</b><span>밝아져도 정면 응시 컷은 금지. 웃음은 옆얼굴로 충분히 전달된다.</span></div>
+    <div class="cd"><b>손: 동작 중·부분 프레임</b><span>제스처 중인 손, 컵을 쥔 손 — 정지된 손 클로즈업 금지. 생성 후 손가락 검수.</span></div>
+    <div class="cd"><b>글자: 프레임에서 배제</b><span>화면·보드·책등의 글자는 "blurred, unreadable" 강제. 한글은 절대 생성 금지.</span></div>
+    <div class="cd x"><b>금지 — S1 히어로·팀 소개</b><span>대형 신뢰 컷·"우리 팀" 문맥은 자체 촬영으로만. 변경 없음.</span></div>
+    <div class="cd x"><b>금지 — 단체 정면 미소</b><span>다 같이 카메라 보고 웃는 컷은 밝은 버전에서도 스톡의 지름길.</span></div>
+    <div class="cd x"><b>금지 — 과한 하이파이브·박수</b><span>"협업 연기" 클리셰. 진짜 협업은 화면을 같이 보는 것.</span></div>
+  </div>
+</div></section>
+
+<!-- ③.5 GPT 사용법 -->
+<section><div class="wrap">
+  <div class="eyebrow">ChatGPT — 미드저니 없이 쓸 때</div>
+  <h2>GPT 이미지 생성으로 쓰는 법</h2>
+  <p class="sub">ChatGPT의 이미지 생성으로 충분히 가능하다. 단 문법이 다르다 — <b>플래그 없음, 전부 자연어.</b> 각 카드의 <b>초록색 GPT 블록</b>을 그대로 붙여넣으면 된다.</p>
+  <div class="conds">
+    <div class="cd"><b>① 플래그 → 문장</b><span>--ar 4:3 → "가로 4:3 비율로". --no → "피해야 할 것:" 목록. --style raw → "스톡 사진 느낌 없이, 사진처럼 사실적으로".</span></div>
+    <div class="cd"><b>② 한국어 그대로 OK</b><span>GPT는 한국어 프롬프트를 잘 알아듣는다. 아래 GPT 블록은 전부 한국어로 작성했다.</span></div>
+    <div class="cd"><b>③ 대화로 수정 가능 (최대 장점)</b><span>생성 후 "더 밝게", "얼굴을 화면 쪽으로 돌려줘", "책상을 좀 더 어지럽혀줘"로 이어서 고칠 수 있다 — 미드저니엔 없는 강점.</span></div>
+    <div class="cd"><b>④ GPT의 약점: 너무 매끈함</b><span>GPT는 기본값이 "깔끔한 AI 광택"이다. 그래서 모든 프롬프트에 "보정 안 한", "약간 불완전한 구도", "일상 스냅처럼" 을 명시해뒀다 — 지우지 말 것.</span></div>
+    <div class="cd"><b>⑤ 글자 금지는 동일</b><span>GPT가 영어 글자는 곧잘 쓰지만 한글은 여전히 깨진다. "글자가 보이지 않게"는 GPT에서도 필수.</span></div>
+    <div class="cd"><b>⑥ 검수 기준 동일</b><span>손가락·글자·광택 체크리스트(v1 문서 8항)는 어느 도구든 같다.</span></div>
+  </div>
+</div></section>
+
+<!-- ④ 프롬프트 -->
+<section><div class="wrap">
+  <div class="eyebrow">Prompts — 자리별 6종 (복사해서 바로 사용)</div>
+  <h2>프롬프트 팩 v2</h2>
+  <p class="sub">공통 구조: <b>[캔디드 선언] + [밝은 자연광] + [사람의 태도가 주인공] + [기술은 배경] + [내추럴 그레이딩].</b> 검은 블록 = 미드저니용(영문) · <b>초록 블록 = ChatGPT용(한국어, 그대로 붙여넣기)</b>.</p>
+  <div class="pcards">
+
+    <div class="pc">
+      <div class="hd"><b>P1 — 창가에서 설명하는 사람</b><span class="tag tag--s">S3</span><span class="tag tag--s">S5</span></div>
+      <p class="desc">밝은 창가, 화면을 가리키며 <strong>동료에게 설명하는 옆모습.</strong> "혼자 딸깍"이 아니라 "사람이 사람에게 설명하는 일"이라는 그림.</p>
+      <div class="story">AI가 짠 코드도, 설명하고 책임지는 건 사람입니다.</div>
+      <pre><span class="lbl">PROMPT</span>candid natural photograph, bright airy office by large windows, soft morning daylight, side profile of a developer in a clean casual shirt pointing at a laptop screen while explaining to a colleague, warm genuine expression not facing camera, screen content softly blurred, coffee cups and small notebook on the white desk, shallow depth of field, natural skin tones no retouching, high resolution editorial photography, light warm color grade, subtle real-office imperfections</pre>
+      <pre class="neg"><span class="lbl">NEGATIVE</span>looking at camera, posed smile, dark moody lighting, readable text, korean letters, suits, stock photo style, over-saturated, HDR, glossy retouched skin, sterile empty studio, high-five</pre>
+      <pre class="gpt"><span class="lbl">GPT용 (한국어)</span>자연광이 가득한 밝은 사무실 창가에서 몰래 찍은 듯한 캔디드 스냅 사진을 만들어줘. 깔끔한 셔츠를 입은 개발자가 노트북 화면을 가리키며 옆 동료에게 설명하는 옆모습이야. 두 사람 다 카메라를 보지 않아. 화면 내용은 초점이 나가 읽을 수 없고, 흰 책상 위에 커피잔과 작은 노트가 자연스럽게 놓여 있어. 보정하지 않은 자연스러운 피부, 얕은 심도, 밝고 따뜻한 색감, 약간 불완전한 구도의 진짜 사무실 느낌. 스톡 사진 느낌 없이 사진처럼 사실적으로, 가로 4:3 비율.
+피해야 할 것: 카메라 응시, 연출된 미소, 어두운 조명, 읽을 수 있는 글자(특히 한글), 정장, 과한 채도, 매끈하게 보정된 피부.</pre>
+      <button class="copy" data-copy>MJ 복사</button> <button class="copy" data-copy-gpt>GPT 복사</button>
+      <div class="ft">MJ: --ar 4:3 --style raw --v 7 · GPT: 블록 그대로 붙여넣기 / 그레이딩: 내추럴 하이키</div>
+    </div>
+
+    <div class="pc">
+      <div class="hd"><b>P2 — 나란히 화면을 보는 두 사람</b><span class="tag tag--s">S4</span><span class="tag tag--s">S5</span></div>
+      <p class="desc">페어로 모니터를 보며 <strong>진지하게 검토하는 뒷모습 ¾.</strong> 하이파이브식 "협업 연기"의 정반대 — 진짜 협업은 같은 화면을 본다.</p>
+      <div class="story">결과물은 두 번 검증됩니다 — 사람의 눈으로.</div>
+      <pre><span class="lbl">PROMPT</span>candid photo from three-quarter behind, two developers sitting side by side reviewing code on a monitor together in a bright modern studio, one leaning in slightly gesturing at the screen, daylight from big window camera-left, screen glow subtle not dominant, screen content out of focus, light wood desk with a plant and scattered sticky notes, natural relaxed posture, high resolution editorial quality, warm natural grade, authentic workplace feel</pre>
+      <pre class="neg"><span class="lbl">NEGATIVE</span>faces turned to camera, dark room, neon, readable code text, korean characters, posed teamwork cliche, high-five, applause, stock photo, oversharpened, plastic skin</pre>
+      <pre class="gpt"><span class="lbl">GPT용 (한국어)</span>밝은 스튜디오 사무실에서 뒤쪽 3/4 각도로 찍은 캔디드 사진을 만들어줘. 개발자 두 명이 나란히 앉아 모니터 하나를 같이 보며 코드를 검토하는 장면이야. 한 명이 살짝 몸을 기울여 화면을 가리키고 있어. 큰 창에서 왼쪽으로 자연광이 들어오고, 화면 내용은 흐려서 읽을 수 없어. 밝은 원목 책상 위에 작은 화분과 포스트잇 몇 장. 편안하고 자연스러운 자세, 따뜻한 색감, 보정하지 않은 사실적 화질, 실제 작업실의 생활감. 가로 3:2 비율.
+피해야 할 것: 카메라를 향한 얼굴, 어두운 방, 읽을 수 있는 코드 글자, 한글, 하이파이브 같은 연출된 팀워크, 스톡 사진 느낌, 플라스틱 같은 피부.</pre>
+      <button class="copy" data-copy>MJ 복사</button> <button class="copy" data-copy-gpt>GPT 복사</button>
+      <div class="ft">MJ: --ar 3:2 --style raw · GPT: 그대로 붙여넣기 / S4 소형 배치 가능(대형 신뢰 컷은 여전히 실사·자체 촬영)</div>
+    </div>
+
+    <div class="pc">
+      <div class="hd"><b>P3 — 화이트보드 앞의 밝은 논의</b><span class="tag tag--s">S3 기획</span></div>
+      <p class="desc">v1 P3의 밝은 버전. 옅게 웃으며 <strong>다이어그램을 그리는 옆모습</strong> — 뒤에 앉은 동료의 어깨가 걸린다.</p>
+      <div class="story">기획은 대화에서 나옵니다. 프롬프트가 아니라.</div>
+      <pre><span class="lbl">PROMPT</span>natural candid photograph, bright meeting corner with white walls and daylight, side profile of a person sketching abstract flow boxes and arrows on a whiteboard with a slight genuine smile, marks on board are abstract unreadable shapes, colleague's shoulder softly out of focus in foreground, paper cups and open laptop on table, airy high-key natural light, editorial photography, true-to-life colors with warm tint, high resolution</pre>
+      <pre class="neg"><span class="lbl">NEGATIVE</span>readable words, letters, korean text, facing camera, dramatic shadows, dark tones, suit and tie, staged presentation, stock gesture, perfect empty room</pre>
+      <pre class="gpt"><span class="lbl">GPT용 (한국어)</span>흰 벽에 자연광이 밝게 드는 회의 코너에서 찍은 캔디드 사진을 만들어줘. 한 사람이 옅게 웃으며 화이트보드에 순서도를 그리는 옆모습이야. 보드 위 표시는 읽을 수 없는 추상적인 박스와 화살표뿐이고 글자는 없어. 전경에는 앉아 있는 동료의 어깨가 흐릿하게 걸려 있고, 테이블 위에 종이컵과 열린 노트북이 있어. 밝고 화사한 자연광, 사실적인 색감에 살짝 따뜻한 톤, 보정 없는 에디토리얼 사진 화질. 가로 4:3 비율.
+피해야 할 것: 읽을 수 있는 글자·한글, 카메라 응시, 극적인 그림자, 어두운 톤, 정장, 연출된 발표 장면, 완벽하게 빈 회의실.</pre>
+      <button class="copy" data-copy>MJ 복사</button> <button class="copy" data-copy-gpt>GPT 복사</button>
+      <div class="ft">MJ: --ar 4:3 --style raw · GPT: 그대로 붙여넣기 / 판서는 도형만 — 실제 판서 컷은 자체 촬영으로 교체</div>
+    </div>
+
+    <div class="pc">
+      <div class="hd"><b>P4 — 경청하는 미팅</b><span class="tag tag--s">S2→S3 전환</span><span class="tag tag--s">P-08</span></div>
+      <p class="desc">노트에 메모하며 <strong>고개 끄덕이는 경청의 순간.</strong> 문의 페이지 근처에서 "말이 통하는 팀"이라는 인상을 만든다.</p>
+      <div class="story">요구사항을 듣는 것부터가 개발입니다.</div>
+      <pre><span class="lbl">PROMPT</span>candid editorial photograph, bright cafe-like meeting space with warm daylight, person in profile nodding and taking notes in a small notebook while listening attentively, the speaker visible only as a soft out-of-focus shoulder in foreground, glass of water and laptop closed on the table, relaxed genuine atmosphere, natural unretouched skin, soft warm high-key grade, high resolution photography, shallow depth of field</pre>
+      <pre class="neg"><span class="lbl">NEGATIVE</span>looking at camera, fake smile, handshake cliche, contracts and documents with text, korean letters, dark lighting, corporate suits, stock photo composition, HDR glow</pre>
+      <pre class="gpt"><span class="lbl">GPT용 (한국어)</span>따뜻한 자연광이 드는 카페 같은 미팅 공간에서 찍은 캔디드 사진을 만들어줘. 한 사람이 옆모습으로 고개를 끄덕이며 작은 노트에 메모하면서 상대의 이야기를 경청하는 장면이야. 말하는 상대는 전경에 어깨만 흐릿하게 보여. 테이블 위에는 물잔과 닫힌 노트북. 편안하고 진솔한 분위기, 보정하지 않은 자연스러운 피부, 부드럽고 밝은 색감, 얕은 심도, 고화질 에디토리얼 사진. 가로 4:3 비율.
+피해야 할 것: 카메라 응시, 가짜 미소, 악수 클리셰, 글자가 보이는 서류, 한글, 어두운 조명, 정장, 스톡 사진 구도.</pre>
+      <button class="copy" data-copy>MJ 복사</button> <button class="copy" data-copy-gpt>GPT 복사</button>
+      <div class="ft">MJ: --ar 4:3 --style raw · GPT: 그대로 붙여넣기 / P-08 사이드 영역용은 소형 크롭</div>
+    </div>
+
+    <div class="pc">
+      <div class="hd"><b>P5 — 밝은 작업 공간의 집중</b><span class="tag tag--s">S3 개발</span><span class="tag tag--s">Insight 커버</span></div>
+      <p class="desc">v1 "어두운 방" 컷의 대체. <strong>한낮의 창가에서 집중한 ¾ 후면</strong> — 야근이 아니라 건강한 몰입.</p>
+      <div class="story">AI와 일해도, 몰입하는 건 사람의 시간입니다.</div>
+      <pre><span class="lbl">PROMPT</span>natural light photograph, three-quarter back view of a developer focused at a bright desk by a large window at midday, soft sunlight across a light wooden desk, dual monitors with softly blurred interface, small plant and ceramic mug and a few sticky notes, upright relaxed posture, clean casual knit sweater, airy atmosphere with gentle shadows, editorial high resolution quality, warm neutral grade, authentic lived-in workspace</pre>
+      <pre class="neg"><span class="lbl">NEGATIVE</span>dark room, night, monitor glow dominating, face visible, readable screen text, korean characters, messy cables chaos, hoodie hacker cliche, stock perfection, oversaturation</pre>
+      <pre class="gpt"><span class="lbl">GPT용 (한국어)</span>한낮의 큰 창가, 밝은 책상에서 집중해 일하는 개발자를 뒤쪽 3/4 각도에서 찍은 자연광 사진을 만들어줘. 부드러운 햇빛이 밝은 원목 책상을 가로지르고, 듀얼 모니터의 화면은 흐려서 읽을 수 없어. 작은 화분, 도자기 머그컵, 포스트잇 몇 장이 자연스럽게 놓여 있어. 단정한 니트를 입은 편안하고 바른 자세. 화사하고 공기감 있는 분위기, 옅은 그림자, 보정 없는 고화질 에디토리얼 사진, 따뜻한 중성 색감, 생활감 있는 진짜 작업 공간. 세로 4:5 비율.
+피해야 할 것: 어두운 방·밤, 화면 불빛이 주인공인 장면, 보이는 얼굴, 읽을 수 있는 화면 글자, 한글, 후드티 해커 클리셰, 스톡 사진 같은 완벽함, 과한 채도.</pre>
+      <button class="copy" data-copy>MJ 복사</button> <button class="copy" data-copy-gpt>GPT 복사</button>
+      <div class="ft">MJ: --ar 4:5(커버) 또는 4:3 --style raw · GPT: 그대로 붙여넣기</div>
+    </div>
+
+    <div class="pc">
+      <div class="hd"><b>P6 — 웃음이 있는 리뷰 순간</b><span class="tag tag--s">S5</span><span class="tag">주의</span></div>
+      <p class="desc">결과물을 보며 <strong>터진 자연스러운 웃음 — 단 옆얼굴로.</strong> 6종 중 표정 의존도가 가장 높아 생성 검수를 가장 빡빡하게.</p>
+      <div class="story">일이 잘 됐을 때의 표정은 연기가 안 됩니다.</div>
+      <pre><span class="lbl">PROMPT</span>candid moment photograph, bright studio space, two people at a desk reacting with genuine laughter to something on a laptop screen, both faces in profile or turned toward the screen away from camera, natural daylight fill, one holding a coffee cup mid-gesture, screen content blurred, soft warm high-key grade, editorial photography, real unposed emotion, high resolution, shallow depth of field</pre>
+      <pre class="neg"><span class="lbl">NEGATIVE</span>faces toward camera, exaggerated open-mouth laughter, high-five, thumbs up, readable text, korean letters, dark tones, stock photo energy, perfect teeth close-up, retouched skin</pre>
+      <pre class="gpt"><span class="lbl">GPT용 (한국어)</span>밝은 스튜디오 사무실 책상에서, 노트북 화면 속 무언가를 보고 두 사람이 진짜로 웃음이 터진 순간을 담은 캔디드 사진을 만들어줘. 두 사람 모두 옆얼굴이거나 화면 쪽을 향하고 있어 카메라를 보지 않아. 한 명은 커피잔을 든 채야. 화면 내용은 흐려서 안 보여. 자연광이 부드럽게 채우고, 밝고 따뜻한 색감, 연출 없는 진짜 감정, 보정하지 않은 고화질 사진, 얕은 심도. 가로 3:2 비율.
+피해야 할 것: 카메라를 향한 얼굴, 과장되게 입을 크게 벌린 웃음, 하이파이브, 엄지척, 읽을 수 있는 글자·한글, 어두운 톤, 스톡 사진 특유의 에너지, 치아 클로즈업, 보정된 피부.</pre>
+      <button class="copy" data-copy>MJ 복사</button> <button class="copy" data-copy-gpt>GPT 복사</button>
+      <div class="ft">MJ: --ar 3:2 --style raw · GPT: 그대로 붙여넣기 / 치아·입 디테일 검수 필수, 어색하면 폐기</div>
+    </div>
+
+  </div>
+</div></section>
+
+<!-- ⑤ 실사 대체 후보 -->
+<section><div class="wrap">
+  <div class="eyebrow">Real Photo First — 같은 무드의 검증된 실사</div>
+  <h2>먼저 실사로 커버되는 자리 (검증 완료 컷)</h2>
+  <p class="sub">아래는 이미 링크 검증된 실사진 중 <b>v2 방향(밝음·사람·자연광)에 맞는 컷</b> — 썸네일에 내추럴 하이키 그레이딩을 적용한 상태로 표시 중이다. AI 생성 전에 이걸로 되는 자리는 이걸로 간다.</p>
+  <div class="strip">
+    <div class="s"><img loading="lazy" src="https://images.unsplash.com/photo-1532622785990-d2c36a76f5a6?w=800&q=80&auto=format" alt="화이트보드에 함께 그리는 두 사람">
+      <div class="bd"><b>화이트보드의 두 사람</b><p>S3 기획 — P3 프롬프트와 같은 자리를 실사로. 밝고 자연스러움.</p></div></div>
+    <div class="s"><img loading="lazy" src="https://images.unsplash.com/photo-1770943558988-2c605d6bd5a7?w=800&q=80&auto=format" alt="채광 좋은 사무실">
+      <div class="bd"><b>채광 좋은 작업 공간</b><p>S4 — 밝은 공간에 사람이 자연스럽게. 환경의 신뢰감.</p></div></div>
+    <div class="s"><img loading="lazy" src="https://images.unsplash.com/photo-1651248340514-f5822cb997c2?w=800&q=80&auto=format" alt="밝은 톤의 타이핑">
+      <div class="bd"><b>밝은 타이핑</b><p>S3 개발·Insight 커버 — 어두운 손 컷의 밝은 대체.</p></div></div>
+    <div class="s"><img loading="lazy" src="https://images.unsplash.com/photo-1590103514966-5e2a11c13e21?w=800&q=80&auto=format" alt="화이트보드에 쓰는 사람">
+      <div class="bd"><b>보드에 쓰는 순간</b><p>S3 — 행위 중간 + 밝은 톤. 자체 촬영 전 임시로.</p></div></div>
+    <div class="s"><img loading="lazy" src="https://images.unsplash.com/photo-1508780709619-79562169bc64?w=800&q=80&auto=format" alt="노트북 작업 미드샷">
+      <div class="bd"><b>노트북 미드샷</b><p>S2 — 밝은 실내의 자연스러운 작업 거리감.</p></div></div>
+    <div class="s"><img loading="lazy" src="https://images.unsplash.com/photo-1678856879593-5fad52ed4abe?w=800&q=80&auto=format" alt="창가 책상의 사람">
+      <div class="bd"><b>창가의 작업자</b><p>S3·커버 — 자연광 + 특정되지 않는 사람. 그레이딩으로 밝게.</p></div></div>
+  </div>
+</div></section>
+
+<footer class="bt"><div class="wrap">
+  AI IMAGE PROMPT PACK v2 · 2026.08.11 · 방향: 밝은 자연광 × 사람의 온기 × 전문가 신뢰감<br>
+  핵심 메시지: "바이브코딩은 AI로, 하지만 하는 건 검증된 사람" — 기술은 배경, 사람의 태도가 주인공<br>
+  v1(어두운 다큐 톤)은 기각 — 파일 보관: AI-인물이미지-프롬프트팩.html · 검수 체크리스트 8항은 v1 문서 그대로 사용<br>
+  우선순위: 실사(위 6컷) → AI 생성(임시) → 자체 촬영(최종)
+</div></footer>
+
+<script>
+function flash(btn, orig) {
+  btn.textContent = '복사됨 ✓'; btn.classList.add('done');
+  setTimeout(function () { btn.textContent = orig; btn.classList.remove('done'); }, 1600);
+}
+/* MJ: 포지티브 + --no 네거티브 */
+document.querySelectorAll('[data-copy]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var card = btn.closest('.pc');
+    var pos = card.querySelector('pre:not(.neg):not(.gpt)').innerText.replace(/^PROMPT/, '').trim();
+    var neg = card.querySelector('pre.neg').innerText.replace(/^NEGATIVE/, '').trim();
+    navigator.clipboard.writeText(pos + '\n\n--no ' + neg).then(function () { flash(btn, 'MJ 복사'); });
+  });
+});
+/* GPT: 한국어 블록 그대로 */
+document.querySelectorAll('[data-copy-gpt]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var card = btn.closest('.pc');
+    var gpt = card.querySelector('pre.gpt').innerText.replace(/^GPT용 \(한국어\)/, '').trim();
+    navigator.clipboard.writeText(gpt).then(function () { flash(btn, 'GPT 복사'); });
+  });
+});
+</script>
+</body>
+</html>

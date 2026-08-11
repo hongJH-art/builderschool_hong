@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 빌더 그룹 — 바이브 코딩 외주 | 목업 P-01</title>
+<meta name="description" content="AI 시대에 최적화된 개발자가 바이브 코딩으로 외주를 해드립니다. 검증된 빌더 맞춤 매칭.">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* ============================================================
+   P-01 홈 — 섹션마다 다른 인터랙션 (02-화면설계/P-01-홈.md)
+   S1 스태거+그라디언트 / S2 Fixed+스크롤 / S3 가로스크롤 연동
+   S4 정지 / S5 호버 확장 / S6 페이드+패럴랙스 / S7 정지
+   S8 퍼짐 전환 / S9 아코디언+URL / S10 마이크로만
+   ============================================================ */
+
+/* ---- S1 Hero: 스태거 등장 + 배경 그라디언트 느린 이동 ---- */
+.hero { position: relative; min-height: calc(100vh - 72px); display: flex; align-items: center; overflow: hidden;
+  border-bottom: 1px solid var(--line); }
+.hero__bg { position: absolute; inset: -20%; z-index: 0; filter: blur(60px); opacity: .55;
+  background:
+    radial-gradient(38% 42% at 22% 30%, var(--lime), transparent 70%),
+    radial-gradient(30% 36% at 78% 68%, #cfe0ff, transparent 70%),
+    radial-gradient(26% 30% at 60% 20%, #ffd9c2, transparent 70%);
+  animation: drift 26s ease-in-out infinite alternate; }
+@keyframes drift {
+  0%   { transform: translate(0,0) scale(1); }
+  50%  { transform: translate(4%, -3%) scale(1.06); }
+  100% { transform: translate(-3%, 4%) scale(1.02); } }
+.hero__in { position: relative; z-index: 1; padding: 60px 0; }
+.hero h1 { margin: 0 0 24px; font-size: clamp(44px, 6.8vw, 84px); font-weight: 800; line-height: 1.06; letter-spacing: -0.045em; }
+.hero h1 mark { background: var(--lime); padding: 0 .08em; border-radius: 10px; }
+.hero p { margin: 0 0 36px; font-size: clamp(16px, 1.8vw, 19px); color: var(--muted); max-width: 54ch; }
+.st { opacity: 0; transform: translateY(28px); animation: stIn .8s cubic-bezier(.2,.6,.2,1) forwards; }
+.st1 { animation-delay: .05s; } .st2 { animation-delay: .18s; } .st3 { animation-delay: .31s; }
+@keyframes stIn { to { opacity: 1; transform: none; } }
+.hero__scroll { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 10px; letter-spacing: .2em; color: var(--muted-2); z-index: 1; }
+.hero__scroll::after { content: ""; display: block; width: 1px; height: 34px; margin: 8px auto 0;
+  background: linear-gradient(var(--muted-2), transparent); animation: scrollHint 1.8s ease-in-out infinite; }
+@keyframes scrollHint { 0%,100% { transform: scaleY(.4); transform-origin: top; } 50% { transform: scaleY(1); } }
+
+/* ---- S2 문제 제기: 좌 고정 + 스크롤에 따라 우측 카드 활성 ---- */
+.s2 { border-bottom: 1px solid var(--line); padding: 0; }
+.s2__track { position: relative; }
+.s2__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+.s2__left { position: sticky; top: 72px; padding: 110px 0; }
+.s2__left h2 { font-size: clamp(30px, 4vw, 46px); }
+.s2__left .note { margin-top: 18px; color: var(--muted); font-size: 15px; max-width: 40ch; }
+.s2__right { padding: 110px 0; display: flex; flex-direction: column; gap: 20vh; }
+.warn { border: 1px solid var(--line); border-radius: 24px; padding: 34px 32px; background: var(--paper-2);
+  opacity: .3; transform: scale(.97); transition: opacity .45s, transform .45s, border-color .45s, background .45s; }
+.warn.active { opacity: 1; transform: none; border-color: var(--ink); background: var(--paper); }
+.warn .no { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--muted-2); }
+.warn h3 { margin: 10px 0 8px; font-size: 21px; font-weight: 800; letter-spacing: -0.03em; }
+.warn p { margin: 0; font-size: 14.5px; color: var(--muted); }
+.warn.active .no { color: var(--ink); }
+
+/* ---- S3 일하는 방식: 세로 스크롤 → 가로 이동 ---- */
+.s3 { padding: 0; border-bottom: 1px solid var(--line); background: var(--ink); color: var(--paper); height: 100%; }
+.s3__sticky { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.s3__outer { height: 320vh; } /* 스크롤 길이 = 이동 거리 */
+.s3__head { padding: 0 28px; max-width: var(--maxw); margin: 0 auto 40px; width: 100%; }
+.s3__head .eyebrow { color: rgba(244,241,234,.4); }
+.s3__head .eyebrow::after { background: rgba(244,241,234,.18); }
+.s3__head h2 { color: var(--paper); }
+.s3__rail { display: flex; gap: 24px; padding: 0 max(28px, calc((100vw - 1200px)/2)); will-change: transform; }
+.step { flex: 0 0 min(420px, 78vw); border: 1px solid rgba(244,241,234,.16); border-radius: 28px; padding: 40px 36px;
+  background: rgba(244,241,234,.04); min-height: 320px; display: flex; flex-direction: column; }
+.step .no { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; color: var(--lime); }
+.step h3 { margin: 14px 0 10px; font-size: 26px; font-weight: 800; letter-spacing: -0.03em; }
+.step p { margin: 0; font-size: 15px; color: rgba(244,241,234,.55); line-height: 1.7; }
+.step .out { margin-top: auto; padding-top: 24px; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: rgba(244,241,234,.4); }
+.s3__bar { height: 2px; background: rgba(244,241,234,.14); margin: 44px 28px 0; max-width: var(--maxw); width: calc(100% - 56px); align-self: center; }
+.s3__bar i { display: block; height: 100%; width: 0; background: var(--lime); transition: width .1s linear; }
+
+/* ---- S4 검증 체계: 의도적 정지 ---- */
+.s4 .vcard { background: var(--paper-2); border: 1px solid var(--line); border-radius: 24px; padding: 34px 32px; }
+.s4 .vcard h3 { margin: 14px 0 8px; font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+.s4 .vcard p { margin: 0; font-size: 14.5px; color: var(--muted); }
+.s4 .quiet { margin-top: 28px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; color: var(--muted-2); }
+
+/* ---- S5 맞춤 매칭: 호버 확장 ---- */
+.s5 { background: var(--paper-3); border-block: 1px solid var(--line); }
+.mcard { position: relative; border: 1px solid var(--line-2); border-radius: 26px; background: var(--paper-2);
+  padding: 34px 32px 30px; cursor: pointer; overflow: hidden; transition: .3s cubic-bezier(.2,.6,.2,1); }
+.mcard:hover, .mcard.open { background: var(--ink); color: var(--paper); border-color: var(--ink); transform: translateY(-6px); }
+.mcard h3 { margin: 0 0 6px; font-size: 22px; font-weight: 800; letter-spacing: -0.03em; }
+.mcard .sub { font-size: 14px; color: var(--muted); transition: .3s; margin: 0; }
+.mcard:hover .sub, .mcard.open .sub { color: rgba(244,241,234,.55); }
+.mcard .plus { position: absolute; top: 28px; right: 28px; width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--line-2); display: grid; place-items: center; font-size: 17px; transition: .3s; }
+.mcard:hover .plus, .mcard.open .plus { background: var(--lime); color: var(--ink); border-color: var(--lime); transform: rotate(45deg); }
+.mcard .detail { max-height: 0; opacity: 0; overflow: hidden; transition: max-height .4s cubic-bezier(.2,.6,.2,1), opacity .3s, margin .3s; margin-top: 0; }
+.mcard:hover .detail, .mcard.open .detail { max-height: 140px; opacity: 1; margin-top: 18px; }
+.mcard .detail p { margin: 0; font-size: 13.5px; color: rgba(244,241,234,.65); line-height: 1.7; }
+
+/* ---- S6 Work 프리뷰: 페이드 + 패럴랙스 ---- */
+.wcard { text-decoration: none; display: block; }
+.wcard .ph { aspect-ratio: 16/11; }
+.wcard .ph .par { position: absolute; inset: -14% 0; background-size: cover; will-change: transform; }
+.wcard:hover .ph { outline: 2px solid var(--ink); outline-offset: -2px; }
+.wcard .meta { padding: 18px 6px 0; }
+.wcard .meta .tag { margin-bottom: 8px; display: inline-block; }
+.wcard h3 { margin: 8px 0 4px; font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+.wcard p { margin: 0; font-size: 14px; color: var(--muted); }
+
+/* ---- S7 Insight 프리뷰: 정지 (텍스트 리스트) ---- */
+.s7 .irow { display: grid; grid-template-columns: 140px 1fr auto; gap: 24px; align-items: baseline;
+  padding: 22px 6px; border-bottom: 1px dashed var(--line); text-decoration: none; transition: background .15s; }
+.s7 .irow:hover { background: var(--paper-2); }
+.s7 .irow .cat { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--muted-2); text-transform: uppercase; }
+.s7 .irow .t { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+.s7 .irow .d { font-family: var(--mono); font-size: 11.5px; color: var(--muted-2); }
+
+/* ---- S8 콘텐츠·유튜브: 퍼짐 전환 ---- */
+.s8 { background: var(--ink); color: var(--paper); border-block: 1px solid var(--line); }
+.s8 .eyebrow { color: rgba(244,241,234,.4); } .s8 .eyebrow::after { background: rgba(244,241,234,.18); }
+.s8 h2 { color: var(--paper); } .s8 .sec-sub { color: rgba(244,241,234,.5); }
+.s8 .more-link { color: var(--lime); }
+.vgrid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; }
+.vcell { position: relative; border-radius: 22px; overflow: hidden; cursor: pointer; background: #1c1c18; aspect-ratio: 16/9;
+  transition: transform .35s cubic-bezier(.2,.6,.2,1); }
+.vcell:hover { transform: scale(1.02); }
+.vcell .thumb { position: absolute; inset: 0;
+  background: radial-gradient(80% 90% at 30% 20%, rgba(216,255,61,.25), transparent 60%),
+              radial-gradient(90% 90% at 80% 85%, rgba(120,140,255,.22), transparent 55%); }
+.vcell .play { position: absolute; inset: 0; display: grid; place-items: center; }
+.vcell .play i { width: 64px; height: 64px; border-radius: 50%; background: var(--lime); display: grid; place-items: center;
+  color: var(--ink); font-size: 20px; transition: transform .35s; }
+.vcell:hover .play i { transform: scale(1.15); }
+.vcell .cap { position: absolute; left: 20px; bottom: 16px; right: 20px; }
+.vcell .cap b { display: block; font-size: 16px; letter-spacing: -0.02em; }
+.vcell .cap span { font-family: var(--mono); font-size: 10.5px; color: rgba(244,241,234,.5); letter-spacing: .08em; }
+.vside { display: grid; gap: 20px; }
+.vside .vcell { aspect-ratio: auto; }
+/* 퍼짐 오버레이 */
+.expand-ov { position: fixed; z-index: 90; border-radius: 22px; background: var(--lime); pointer-events: none;
+  transition: all .5s cubic-bezier(.7,0,.3,1); opacity: 0; }
+.expand-ov.go { border-radius: 0; opacity: 1; }
+
+/* ---- S9 FAQ: 아코디언 + URL 분기 ---- */
+.s9 .topics { display: inline-flex; background: var(--paper-3); border-radius: 999px; padding: 5px; gap: 2px; margin-bottom: 36px; }
+.s9 .topic { border: 0; background: transparent; padding: 10px 24px; border-radius: 999px; font-family: var(--sans);
+  font-size: 15px; font-weight: 600; color: var(--muted); cursor: pointer; transition: .15s; }
+.s9 .topic[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-q { width: 100%; text-align: left; background: none; border: 0; font-family: var(--sans); cursor: pointer;
+  padding: 24px 44px 24px 6px; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); position: relative; }
+.faq-q::after { content: "+"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 22px; font-weight: 400; color: var(--muted-2); transition: transform .3s; }
+.faq-q[aria-expanded="true"]::after { transform: translateY(-50%) rotate(45deg); color: var(--ink); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height .4s cubic-bezier(.2,.6,.2,1); }
+.faq-a p { margin: 0; padding: 0 6px 26px; color: var(--muted); font-size: 15px; max-width: 70ch; }
+.s9 .url-demo { margin-top: 20px; font-family: var(--mono); font-size: 11px; color: var(--muted-2); letter-spacing: .05em; }
+.s9 .url-demo b { color: var(--ink); }
+
+/* ---- S10 최종 CTA: 마이크로만 ---- */
+.s10 { text-align: center; padding: 130px 0; }
+.s10 h2 { font-size: clamp(32px, 4.6vw, 54px); margin-bottom: 14px; }
+.s10 p { color: var(--muted); margin: 0 0 36px; font-size: 17px; }
+
+/* ---- 모바일 ---- */
+@media (max-width: 900px) {
+  .s2__grid { grid-template-columns: 1fr; gap: 0; }
+  .s2__left { position: static; padding: 72px 0 8px; }
+  .s2__right { padding: 24px 0 72px; gap: 20px; }
+  .warn { opacity: 1; transform: none; }              /* Fixed 해제 → 순차 노출 */
+  .s3__outer { height: auto; }
+  .s3__sticky { position: static; height: auto; padding: 72px 0; }
+  .s3__rail { overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; } /* 스와이프 캐러셀 */
+  .step { scroll-snap-align: start; }
+  .s3__bar { display: none; }
+  .vgrid { grid-template-columns: 1fr; }
+  .s7 .irow { grid-template-columns: 1fr; gap: 4px; }
+  .mcard .detail { max-height: none; opacity: 1; margin-top: 14px; display: none; }
+  .mcard.open .detail { display: block; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문 바로가기</a>
+
+<header class="gnb">
+  <div class="gnb__in">
+    <a class="logo" href="index.html"><i></i>AI 빌더 그룹 <small>(가제·Q1)</small></a>
+    <button class="gnb__burger" aria-label="메뉴">☰</button>
+    <nav>
+      <a href="work.html">Work</a>
+      <a href="insight.html">Insight</a>
+      <a href="content.html">콘텐츠</a>
+    </nav>
+    <a class="btn btn--ink btn--sm" href="contact.html" data-track="cta_click" data-location="gnb">문의하기</a>
+  </div>
+</header>
+
+<main id="main" style="padding-top:0">
+
+<!-- ===== S1 Hero — 스태거 + 그라디언트 드리프트 ===== -->
+<section class="hero" style="padding:0">
+  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="wrap hero__in">
+    <h1 class="st st1">바이브 코딩으로,<br><mark>외주</mark>를 해드립니다</h1>
+    <p class="st st2">AI 시대에는 AI에 최적화된 개발자가 필요합니다.<br>
+      검증된 빌더가 당신의 서비스에 맞춰 만듭니다.</p>
+    <div class="st st3">
+      <a class="btn btn--ink" href="contact.html" data-track="cta_click" data-location="hero">프로젝트 문의 <span class="arr">→</span></a>
+    </div>
+  </div>
+  <div class="hero__scroll">SCROLL</div>
+</section>
+
+<!-- ===== S2 문제 제기 — Fixed + 스크롤 연동 ===== -->
+<section class="s2">
+  <div class="wrap">
+    <div class="s2__grid">
+      <div class="s2__left">
+        <div class="eyebrow">Why Careful</div>
+        <h2>요즘 바이브 코딩 외주,<br>이런 곳은 조심하세요</h2>
+        <p class="note">스크롤을 내리면, 실제로 시장에서 벌어지고 있는 일들이 하나씩 나타납니다.</p>
+      </div>
+      <div class="s2__right">
+        <div class="warn" data-warn>
+          <span class="no">CASE 01</span>
+          <h3>포트폴리오 수백 개가 전부 목업인 업체</h3>
+          <p>실제 수행한 적 없는 프로젝트를 산업별로 만들어두고, 문의가 오면 실적처럼 보냅니다.</p>
+        </div>
+        <div class="warn" data-warn>
+          <span class="no">CASE 02</span>
+          <h3>모든 섹션이 똑같이 움직이는 사이트</h3>
+          <p>전 섹션 동일한 애니메이션 — AI로 한 번에 생성한 결과물의 전형적인 신호입니다.</p>
+        </div>
+        <div class="warn" data-warn>
+          <span class="no">CASE 03</span>
+          <h3>싼 가격만 내세우는 반값 외주</h3>
+          <p>"반값에 이상한 걸 만들 바에, 제값 주고 좋은 걸 만들겠다" — 발주자들의 실제 결론입니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S3 일하는 방식 — 세로 스크롤 → 가로 이동 ===== -->
+<div class="s3__outer" id="how">
+  <section class="s3" style="padding:0">
+    <div class="s3__sticky">
+      <div class="s3__head">
+        <div class="eyebrow">How We Work</div>
+        <h2>그래서 우리는,<br>일하는 방식이 다릅니다</h2>
+      </div>
+      <div class="s3__rail" data-rail>
+        <div class="step">
+          <span class="no">STEP 01</span>
+          <h3>기획</h3>
+          <p>요구사항을 화면 목록과 기능 명세로 확정합니다. 여기서 정해진 범위가 이후 모든 판단의 기준선이 됩니다.</p>
+          <span class="out">산출물 — 기획서 · IA · 화면 정의</span>
+        </div>
+        <div class="step">
+          <span class="no">STEP 02</span>
+          <h3>디자인 · 목업</h3>
+          <p>기능이 동작하는 가상 사이트(목업)로 확인합니다. 그림이 아니라 실제로 눌러보고 결정하실 수 있습니다.</p>
+          <span class="out">산출물 — 동작 목업 · 디자인 시안</span>
+        </div>
+        <div class="step">
+          <span class="no">STEP 03</span>
+          <h3>개발</h3>
+          <p>확정된 시안과 화면상 100% 동일한 완성도로 구현합니다. 검색 최적화 세팅까지 기본입니다.</p>
+          <span class="out">산출물 — 배포 사이트 · SEO 세팅</span>
+        </div>
+        <div class="step">
+          <span class="no">STEP 04</span>
+          <h3>검수 · 이관</h3>
+          <p>단계마다 확인을 받고 진행하며, 완료 후 모든 계정과 권한을 안전하게 이전합니다.</p>
+          <span class="out">산출물 — 인계 문서 · 계정 이관</span>
+        </div>
+      </div>
+      <div class="s3__bar"><i data-railbar></i></div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== S4 검증 체계 — 의도적 정지 ===== -->
+<section class="s4">
+  <div class="wrap">
+    <div class="eyebrow">Quality System</div>
+    <h2>결과물이 상향 평준화되는 이유</h2>
+    <p class="sec-sub">화려한 말 대신, 구조로 보장합니다.</p>
+    <div class="grid g3">
+      <div class="vcard">
+        <span class="tag">Education</span>
+        <h3>체계적 교육을 수료한 빌더</h3>
+        <p>실전 커리큘럼을 통과한 빌더만 프로젝트에 참여합니다.</p>
+      </div>
+      <div class="vcard">
+        <span class="tag">System</span>
+        <h3>똑빌더 시스템 관리</h3>
+        <p>진행 상황·품질·이슈를 전용 협업 시스템으로 밀착 관리합니다.</p>
+      </div>
+      <div class="vcard">
+        <span class="tag">Selection</span>
+        <h3>선별된 빌더 배정</h3>
+        <p>프로젝트 성격에 맞는 검증된 빌더를 선별해 배정합니다.</p>
+      </div>
+    </div>
+    <p class="quiet">이 섹션에는 애니메이션이 없습니다 — 신뢰에 관한 정보는 차분하게. (의도적 정지 구간)</p>
+  </div>
+</section>
+
+<!-- ===== S5 맞춤 매칭 — 호버 확장 ===== -->
+<section class="s5">
+  <div class="wrap">
+    <div class="eyebrow">Matching</div>
+    <h2>개발사를 고르지 마세요.<br>맞는 개발자를 매칭해 드립니다</h2>
+    <p class="sec-sub">카드에 마우스를 올려보세요. (모바일: 탭)</p>
+    <div class="grid g3">
+      <div class="mcard" tabindex="0">
+        <div class="plus">+</div>
+        <h3>랜딩 · 웹사이트</h3>
+        <p class="sub">브랜드 사이트, 수주용 랜딩</p>
+        <div class="detail"><p>디자인 감도와 인터랙션 구현력이 검증된 빌더가 맡습니다. 전환 트래킹 설계까지 포함합니다.</p></div>
+      </div>
+      <div class="mcard" tabindex="0">
+        <div class="plus">+</div>
+        <h3>SaaS · 플랫폼</h3>
+        <p class="sub">관리자·데이터 구조가 있는 서비스</p>
+        <div class="detail"><p>데이터 모델링과 권한 설계 경험이 있는 빌더를 배정합니다. 규모가 크면 시니어 개발자와 투트랙으로.</p></div>
+      </div>
+      <div class="mcard" tabindex="0">
+        <div class="plus">+</div>
+        <h3>AI 서비스</h3>
+        <p class="sub">LLM 연동, AI 기능 탑재</p>
+        <div class="detail"><p>AI API 연동과 프롬프트 설계를 실무로 다뤄본 빌더가 맡습니다. PoC부터 단계적으로 검증합니다.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S6 Work 프리뷰 — 페이드인 + 패럴랙스 ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Work</div>
+        <h2>완성한 프로젝트</h2>
+      </div>
+      <a class="more-link" href="work.html">전체 보기</a>
+    </div>
+    <p class="sec-sub">실제로 수행한 프로젝트만 올립니다.</p>
+    <div class="grid g3">
+      <a class="wcard rv" href="work-detail.html" data-track="work_card">
+        <div class="ph" data-label="Thumbnail — 에셋 교체 예정"><div class="par"></div></div>
+        <div class="meta"><span class="tag">AI Service</span>
+          <h3>AI 상담 챗봇 구축</h3><p>프로토타입 2주 완성 · 빌더 3인</p></div>
+      </a>
+      <a class="wcard rv d1" href="work-detail.html">
+        <div class="ph" data-label="Thumbnail"><div class="par"></div></div>
+        <div class="meta"><span class="tag">Landing</span>
+          <h3>수주용 브랜드 랜딩</h3><p>전환 트래킹 설계 포함 · 빌더 2인</p></div>
+      </a>
+      <a class="wcard rv d2" href="work-detail.html">
+        <div class="ph" data-label="Thumbnail"><div class="par"></div></div>
+        <div class="meta"><span class="tag">Platform</span>
+          <h3>콘텐츠 관리 플랫폼</h3><p>관리자·에디터 구축 · 빌더 3인</p></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S7 Insight 프리뷰 — 정지 ===== -->
+<section class="s7" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Insight</div>
+        <h2>우리의 생각</h2>
+      </div>
+      <a class="more-link" href="insight.html">전체 보기</a>
+    </div>
+    <p class="sec-sub"></p>
+    <a class="irow" href="insight-detail.html">
+      <span class="cat">발주 가이드</span>
+      <span class="t">바이브 코딩 외주, 잘하는 곳과 못하는 곳의 차이</span>
+      <span class="d">2026.08.11</span>
+    </a>
+    <a class="irow" href="insight-detail.html">
+      <span class="cat">일하는 방식</span>
+      <span class="t">우리가 3주 만에 랜딩 페이지를 만드는 순서</span>
+      <span class="d">2026.08.09</span>
+    </a>
+    <a class="irow" href="insight-detail.html">
+      <span class="cat">AI 활용</span>
+      <span class="t">새 AI 툴을 실무에 붙일 때 우리가 확인하는 것들</span>
+      <span class="d">2026.08.07</span>
+    </a>
+  </div>
+</section>
+
+<!-- ===== S8 콘텐츠·유튜브 — 퍼짐 전환 ===== -->
+<section class="s8">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Content</div>
+        <h2>영상으로 보는 우리의 작업</h2>
+      </div>
+      <a class="more-link" href="content.html">콘텐츠 탭</a>
+    </div>
+    <p class="sec-sub">클릭하면 퍼지는 전환과 함께 이동합니다. (UTM 부착 — 콘솔 확인)</p>
+    <div class="vgrid">
+      <div class="vcell" data-expand data-track="youtube_outbound" data-slug="featured">
+        <div class="thumb"></div>
+        <div class="play"><i>▶</i></div>
+        <div class="cap"><b>바이브 코딩으로 실제 외주를 하는 방법</b><span>FEATURED · 12:40</span></div>
+      </div>
+      <div class="vside">
+        <div class="vcell" data-expand style="aspect-ratio:16/8">
+          <div class="thumb"></div><div class="play"><i>▶</i></div>
+          <div class="cap"><b>AI 네이티브로 일한다는 것</b><span>08:15</span></div>
+        </div>
+        <div class="vcell" data-expand style="aspect-ratio:16/8">
+          <div class="thumb"></div><div class="play"><i>▶</i></div>
+          <div class="cap"><b>외주 견적, 이렇게 잡습니다</b><span>10:02</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S9 FAQ — 아코디언 + URL 분기 ===== -->
+<section class="s9" id="faq">
+  <div class="wrap">
+    <div class="eyebrow">FAQ</div>
+    <h2>자주 묻는 질문</h2>
+    <p class="sec-sub">토픽을 전환하면 URL이 바뀝니다 — 트래킹을 위한 설계입니다.</p>
+
+    <div class="topics" role="tablist">
+      <button class="topic" role="tab" aria-selected="true" data-topic="inquiry" data-track="faq_topic_change">외주 문의</button>
+      <button class="topic" role="tab" aria-selected="false" data-topic="process" data-track="faq_topic_change">진행 방식</button>
+    </div>
+
+    <div data-panel="inquiry">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fa1">바이브 코딩으로 만들면 품질이 괜찮나요?</button>
+        <div class="faq-a" id="fa1" role="region"><p>도구가 아니라 만드는 사람이 품질을 결정합니다. 우리는 교육을 수료하고 검증된 빌더만 배정하고, 전용 시스템으로 진행 과정을 관리해 결과물을 상향 평준화합니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fa2">기간은 얼마나 걸리나요?</button>
+        <div class="faq-a" id="fa2" role="region"><p>규모에 따라 다르지만, 랜딩 페이지 기준 제작 2주 + 환경 세팅·이관 1주가 일반적입니다. 기획 단계에서 일정을 확정해 드립니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fa3">어떤 개발자가 작업하나요?</button>
+        <div class="faq-a" id="fa3" role="region"><p>프로젝트 성격에 맞는 빌더를 선별해 배정합니다. 규모가 큰 프로젝트는 시니어 개발자가 함께 투입되는 투트랙으로 진행합니다.</p></div>
+      </div>
+    </div>
+
+    <div data-panel="process" hidden>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fb1">진행 단계는 어떻게 되나요?</button>
+        <div class="faq-a" id="fb1" role="region"><p>기획 → 디자인(목업) → 개발 순서로 진행하며, 각 단계마다 확인을 받고 다음으로 넘어갑니다. 디자인 단계에서는 실제로 눌러볼 수 있는 목업을 드립니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fb2">수정 요청은 어디까지 가능한가요?</button>
+        <div class="faq-a" id="fb2" role="region"><p>문구·이미지 교체 같은 경미한 수정은 범위 내에서 반영합니다. 화면 추가나 기능 변경은 일정·비용과 함께 별도로 안내드립니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fb3">완료 후 유지보수는요?</button>
+        <div class="faq-a" id="fb3" role="region"><p>납품 후 30일 무상 하자보수가 기본입니다. 이후 기능 추가·운영 관리는 별도 유지보수 계약으로 진행합니다.</p></div>
+      </div>
+    </div>
+
+    <p class="url-demo">현재 URL: <b data-urlnow>…/faq/inquiry</b> — 실서비스에서는 /faq/inquiry ↔ /faq/process 경로 분기 (목업은 해시로 시뮬레이션)</p>
+  </div>
+</section>
+
+<!-- ===== S10 최종 CTA — 마이크로만 ===== -->
+<section class="s10">
+  <div class="wrap">
+    <h2>만들고 싶은 것이 있으신가요?</h2>
+    <p>지금 프로젝트를 문의해 주세요. 빠르게 연락드립니다.</p>
+    <a class="btn btn--lime" href="contact.html" data-track="cta_click" data-location="footer_cta">프로젝트 문의 <span class="arr">→</span></a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="ft">
+      <div class="ft__brand">
+        <a class="logo" href="index.html"><i></i>AI 빌더 그룹</a>
+        <p>AI 시대에 최적화된 바이브코딩 외주 전문 그룹</p>
+      </div>
+      <nav class="ft__nav">
+        <a href="work.html">Work</a>
+        <a href="insight.html">Insight</a>
+        <a href="content.html">콘텐츠</a>
+        <a href="contact.html">문의하기</a>
+      </nav>
+      <div class="ft__meta">
+        <span>문의: contact@_______ (확정 전)</span>
+        <a href="privacy.html">개인정보처리방침</a>
+        <span>ⓒ 2026 AI 빌더 그룹 (가제)</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="expand-ov" data-ov></div>
+
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mobile = window.matchMedia('(max-width: 900px)');
+
+  /* S2: 스크롤 위치에 따라 카드 활성 */
+  var warns = document.querySelectorAll('[data-warn]');
+  function s2Update() {
+    if (mobile.matches) { warns.forEach(function (w) { w.classList.add('active'); }); return; }
+    var mid = window.innerHeight * 0.55;
+    warns.forEach(function (w) {
+      var r = w.getBoundingClientRect();
+      w.classList.toggle('active', r.top < mid && r.bottom > mid * 0.5);
+    });
+  }
+  window.addEventListener('scroll', s2Update, { passive: true }); s2Update();
+
+  /* S3: 세로 스크롤 → 레일 가로 이동 */
+  var outer = document.querySelector('.s3__outer');
+  var rail = document.querySelector('[data-rail]');
+  var bar = document.querySelector('[data-railbar]');
+  function s3Update() {
+    if (mobile.matches || reduced || !outer || !rail) return;
+    var r = outer.getBoundingClientRect();
+    var total = r.height - window.innerHeight;
+    var p = Math.min(1, Math.max(0, -r.top / total));
+    var dist = rail.scrollWidth - window.innerWidth;
+    rail.style.transform = 'translateX(' + (-p * dist) + 'px)';
+    if (bar) bar.style.width = (p * 100) + '%';
+  }
+  window.addEventListener('scroll', s3Update, { passive: true }); s3Update();
+
+  /* S5: 모바일 탭 토글 */
+  document.querySelectorAll('.mcard').forEach(function (c) {
+    c.addEventListener('click', function () { if (mobile.matches) c.classList.toggle('open'); });
+  });
+
+  /* S6: 카드 이미지 패럴랙스 */
+  var pars = document.querySelectorAll('.wcard .par');
+  function parUpdate() {
+    if (reduced || mobile.matches) return;
+    pars.forEach(function (p) {
+      var r = p.closest('.ph').getBoundingClientRect();
+      var t = (r.top + r.height / 2 - window.innerHeight / 2) / window.innerHeight;
+      p.style.transform = 'translateY(' + (t * 26) + 'px)';
+    });
+  }
+  window.addEventListener('scroll', parUpdate, { passive: true }); parUpdate();
+
+  /* S8: 퍼짐 전환 → content.html 이동 */
+  var ov = document.querySelector('[data-ov]');
+  document.querySelectorAll('[data-expand]').forEach(function (v) {
+    v.addEventListener('click', function () {
+      window.track('youtube_outbound', { utm: 'utm_source=builder-group&utm_medium=content' });
+      if (reduced) { location.href = 'content.html'; return; }
+      var r = v.getBoundingClientRect();
+      ov.style.cssText = 'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;opacity:1;';
+      requestAnimationFrame(function () {
+        ov.classList.add('go');
+        ov.style.cssText += 'left:0;top:0;width:100vw;height:100vh;';
+      });
+      setTimeout(function () { location.href = 'content.html'; }, 520);
+    });
+  });
+
+  /* S9: FAQ 아코디언 + URL 해시 분기 */
+  document.querySelectorAll('.faq-q').forEach(function (q) {
+    q.addEventListener('click', function () {
+      var open = q.getAttribute('aria-expanded') === 'true';
+      q.setAttribute('aria-expanded', String(!open));
+      var a = document.getElementById(q.getAttribute('aria-controls'));
+      a.style.maxHeight = open ? '0' : a.scrollHeight + 'px';
+    });
+  });
+  var urlNow = document.querySelector('[data-urlnow]');
+  function setTopic(t) {
+    document.querySelectorAll('.topic').forEach(function (b) {
+      b.setAttribute('aria-selected', String(b.dataset.topic === t));
+    });
+    document.querySelectorAll('[data-panel]').forEach(function (p) {
+      p.hidden = p.dataset.panel !== t;
+    });
+    /* 실서비스: history.pushState('/faq/' + t) — 목업은 해시 */
+    if (location.hash !== '#faq-' + t) history.replaceState(null, '', '#faq-' + t);
+    if (urlNow) urlNow.textContent = '…/faq/' + t;
+  }
+  document.querySelectorAll('.topic').forEach(function (b) {
+    b.addEventListener('click', function () { setTopic(b.dataset.topic); });
+  });
+  if (location.hash.indexOf('#faq-') === 0) setTopic(location.hash.replace('#faq-', ''));
+})();
+</script>
+</body>
+</html>

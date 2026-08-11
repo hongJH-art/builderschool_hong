@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 빌더 그룹 — 바이브 코딩 외주 | 목업 v2 P-01</title>
+<meta name="description" content="AI 시대에 최적화된 개발자가 바이브 코딩으로 외주를 해드립니다. 검증된 빌더 맞춤 매칭.">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* ============================================================
+   P-01 홈 v2 — 인터랙션 배정은 v1과 동일 (02-화면설계/P-01-홈.md)
+   디자인은 시안 최종안 크래프트 적용:
+   A(플랫 에디토리얼) 기본 지면 · B(다크 시네마틱) S3/S8 · 디테일 강화
+   ============================================================ */
+
+/* ---- S1 Hero: 스태거 등장 + 배경 그라디언트 느린 이동 ---- */
+.hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden;
+  border-bottom: 1px solid var(--line); }
+.hero__bg { position: absolute; inset: -22%; z-index: 0; filter: blur(70px); opacity: .5;
+  background:
+    radial-gradient(36% 40% at 20% 28%, var(--lime), transparent 68%),
+    radial-gradient(30% 34% at 80% 70%, #E9E4CF, transparent 70%),
+    radial-gradient(24% 28% at 62% 16%, #FFE9D2, transparent 70%);
+  animation: drift 28s ease-in-out infinite alternate; }
+@keyframes drift {
+  0%   { transform: translate(0,0) scale(1); }
+  50%  { transform: translate(4%, -3%) scale(1.06); }
+  100% { transform: translate(-3%, 4%) scale(1.02); } }
+.hero__in { position: relative; z-index: 1; padding: 100px 0 80px; width: 100%; }
+.hero .kicker { font-family: var(--mono); font-size: 10.5px; letter-spacing: .24em; text-transform: uppercase;
+  color: var(--muted); display: flex; align-items: center; gap: 13px; margin-bottom: 32px; }
+.hero .kicker i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime);
+  outline: 1.5px solid var(--ink); outline-offset: 1.5px; }
+.hero h1 { margin: 0 0 28px; font-size: clamp(46px, 7.2vw, 96px); font-weight: 800; line-height: 1.02; letter-spacing: -0.05em; }
+.hero h1 .w300 { font-weight: 300; letter-spacing: -0.035em; }
+.hero h1 mark { background: var(--lime); padding: 0 .08em; border-radius: 10px;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.hero p { margin: 0 0 40px; font-size: clamp(16px, 1.8vw, 18.5px); color: var(--muted); max-width: 46ch;
+  line-height: 1.75; word-break: keep-all; }
+.hero__cta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.hero__cta .quiet { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: var(--muted-2); text-transform: uppercase; }
+.st { opacity: 0; transform: translateY(28px); animation: stIn .85s cubic-bezier(.2,.6,.2,1) forwards; }
+.st1 { animation-delay: .05s; } .st2 { animation-delay: .17s; } .st3 { animation-delay: .29s; } .st4 { animation-delay: .41s; }
+@keyframes stIn { to { opacity: 1; transform: none; } }
+.hero__coords { position: absolute; right: 30px; bottom: 30px; z-index: 1; text-align: right;
+  font-family: var(--mono); font-size: 9px; letter-spacing: .18em; color: var(--muted-2); line-height: 1.9; }
+.hero__scroll { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .26em; color: var(--muted-2); z-index: 1; }
+.hero__scroll::after { content: ""; display: block; width: 1px; height: 36px; margin: 9px auto 0;
+  background: linear-gradient(var(--ink), transparent); animation: scrollHint 1.9s ease-in-out infinite; }
+@keyframes scrollHint { 0%,100% { transform: scaleY(.35); transform-origin: top; } 50% { transform: scaleY(1); } }
+@media (max-width: 720px){ .hero__coords { display: none; } }
+
+/* ---- S2 문제 제기: 좌 고정 + 스크롤 연동 활성 ---- */
+.s2 { border-bottom: 1px solid var(--line); padding: 0; }
+.s2__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start; }
+.s2__left { position: sticky; top: 72px; padding: 130px 0; }
+.s2__left h2 { font-size: clamp(32px, 4.4vw, 52px); }
+.s2__left .note { margin-top: 20px; color: var(--muted); font-size: 15px; max-width: 38ch; word-break: keep-all; }
+.s2__count { margin-top: 44px; font-family: var(--mono); font-size: 11px; letter-spacing: .2em; color: var(--muted-2); }
+.s2__count b { color: var(--ink); font-weight: 700; }
+.s2__right { padding: 130px 0; display: flex; flex-direction: column; gap: 22vh; }
+.warn { position: relative; border: 1px solid var(--line); border-radius: 22px; padding: 36px 34px 34px;
+  background: var(--paper-2); opacity: .32; transform: scale(.975);
+  transition: opacity .45s, transform .45s, border-color .45s, background .45s; }
+.warn::before { content: ""; position: absolute; left: -1px; top: 26px; bottom: 26px; width: 3px;
+  border-radius: 0 3px 3px 0; background: var(--lime); opacity: 0; transition: opacity .45s; }
+.warn.active { opacity: 1; transform: none; border-color: var(--ink); background: var(--paper); }
+.warn.active::before { opacity: 1; }
+.warn .no { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; color: var(--muted-2); }
+.warn h3 { margin: 12px 0 10px; font-size: 22px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.35; }
+.warn p { margin: 0; font-size: 14.5px; color: var(--muted); line-height: 1.7; word-break: keep-all; }
+.warn.active .no { color: var(--ink); }
+
+/* ---- S3 일하는 방식: 세로 스크롤 → 가로 이동 (다크 + 그레인) ---- */
+.s3 { padding: 0; border-bottom: 1px solid var(--line); background: var(--ink); color: var(--paper); height: 100%; }
+.s3__sticky { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.s3__outer { height: 340vh; }
+.s3__head { padding: 0 28px; max-width: var(--maxw); margin: 0 auto 44px; width: 100%;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+.s3__head .eyebrow { color: var(--d-mut2); margin-bottom: 16px; }
+.s3__head .eyebrow::after { background: var(--d-line); }
+.s3__head .eyebrow i { outline-color: var(--paper); }
+.s3__head h2 { color: var(--paper); margin: 0; }
+.s3__cnt { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; color: var(--d-mut2);
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+.s3__cnt b { color: var(--lime); font-weight: 700; }
+.s3__rail { display: flex; gap: 22px; padding: 0 max(28px, calc((100vw - 1200px)/2)); will-change: transform; }
+.step { flex: 0 0 min(430px, 78vw); border: 1px solid var(--d-line); border-radius: 26px; padding: 38px 36px 34px;
+  background: rgba(244,241,234,.035); min-height: 340px; display: flex; flex-direction: column; }
+.step .no { font-family: var(--mono); font-size: 38px; font-weight: 400; color: var(--lime);
+  letter-spacing: -0.02em; line-height: 1; }
+.step h3 { margin: 22px 0 10px; font-size: 27px; font-weight: 800; letter-spacing: -0.035em; }
+.step p { margin: 0; font-size: 14.5px; color: var(--d-mut); line-height: 1.75; word-break: keep-all; }
+.step .out { margin-top: auto; padding-top: 26px; border-top: 1px dashed var(--d-line);
+  font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--d-mut2); }
+.s3__bar { height: 2px; background: var(--d-line); margin: 46px auto 0; max-width: var(--maxw); width: calc(100% - 56px); }
+.s3__bar i { display: block; height: 100%; width: 0; background: var(--lime); transition: width .1s linear; }
+
+/* ---- S4 검증 체계: 의도적 정지 ---- */
+.s4 .vrow { display: grid; grid-template-columns: 92px 300px 1fr; gap: 34px; align-items: baseline;
+  padding: 32px 8px; border-bottom: 1px solid var(--line); }
+.s4 .vrow:first-of-type { border-top: 1px solid var(--line-2); }
+.s4 .vrow .no { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--muted-2); }
+.s4 .vrow h3 { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.4; }
+.s4 .vrow p { margin: 0; font-size: 14.5px; color: var(--muted); line-height: 1.7; max-width: 52ch; word-break: keep-all; }
+.s4 .quiet { margin-top: 30px; font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: var(--muted-2); }
+@media (max-width: 900px){ .s4 .vrow { grid-template-columns: 60px 1fr; } .s4 .vrow p { grid-column: 2; } }
+
+/* ---- S5 맞춤 매칭: 호버 확장 ---- */
+.s5 { background: var(--paper-3); border-block: 1px solid var(--line); }
+.mcard { position: relative; border: 1px solid var(--line-2); border-radius: 24px; background: var(--paper-2);
+  padding: 36px 34px 32px; cursor: pointer; overflow: hidden; transition: .32s cubic-bezier(.2,.6,.2,1); }
+.mcard:hover, .mcard.open, .mcard:focus-visible { background: var(--ink); color: var(--paper); border-color: var(--ink); transform: translateY(-6px); }
+.mcard .k { font-family: var(--mono); font-size: 9.5px; letter-spacing: .2em; color: var(--muted-2); text-transform: uppercase; display: block; margin-bottom: 18px; }
+.mcard h3 { margin: 0 0 7px; font-size: 23px; font-weight: 800; letter-spacing: -0.035em; }
+.mcard .sub { font-size: 14px; color: var(--muted); transition: .3s; margin: 0; }
+.mcard:hover .sub, .mcard.open .sub { color: var(--d-mut); }
+.mcard:hover .k, .mcard.open .k { color: var(--d-mut2); }
+.mcard .plus { position: absolute; top: 30px; right: 30px; width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--line-2); display: grid; place-items: center; font-size: 17px; transition: .3s; font-weight: 400; }
+.mcard:hover .plus, .mcard.open .plus { background: var(--lime); color: var(--ink); border-color: var(--lime); transform: rotate(45deg); }
+.mcard .detail { max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height .4s cubic-bezier(.2,.6,.2,1), opacity .3s, margin .3s; margin-top: 0; }
+.mcard:hover .detail, .mcard.open .detail { max-height: 160px; opacity: 1; margin-top: 20px; }
+.mcard .detail p { margin: 0; font-size: 13.5px; color: rgba(244,241,234,.68); line-height: 1.75; word-break: keep-all; }
+.mcard .detail .who { display: block; margin-top: 12px; font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: .12em; color: var(--lime); text-transform: uppercase; }
+
+/* ---- S6 Work 프리뷰: 페이드 + 패럴랙스 ---- */
+.wcard .ph { aspect-ratio: 16/11; }
+.wcard .ph .par { position: absolute; inset: -14% 0; will-change: transform;
+  background: radial-gradient(70% 60% at 70% 30%, rgba(216,255,61,.14), transparent 60%); }
+
+/* ---- S7 Insight 프리뷰: 정지 (텍스트 리스트) ---- */
+.s7 .irow { display: grid; grid-template-columns: 150px 1fr auto; gap: 26px; align-items: baseline;
+  padding: 26px 8px; border-bottom: 1px solid var(--line); text-decoration: none; transition: background .15s, padding-left .15s; }
+.s7 .irow:first-of-type { border-top: 1px solid var(--line-2); }
+.s7 .irow:hover { background: var(--paper-2); padding-left: 18px; }
+.s7 .irow .cat { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--muted-2); text-transform: uppercase; }
+.s7 .irow .t { font-size: 19px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.45; }
+.s7 .irow .d { font-family: var(--mono); font-size: 11px; color: var(--muted-2); font-variant-numeric: tabular-nums; }
+
+/* ---- S8 콘텐츠·유튜브: 퍼짐 전환 (다크 + 그레인) ---- */
+.s8 { background: var(--ink); color: var(--paper); border-block: 1px solid var(--line); }
+.s8 .eyebrow { color: var(--d-mut2); } .s8 .eyebrow::after { background: var(--d-line); }
+.s8 .eyebrow i { outline-color: var(--paper); }
+.s8 h2 { color: var(--paper); } .s8 .sec-sub { color: var(--d-mut); }
+.s8 .more-link { color: var(--lime); }
+.vgrid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; }
+.vcell { position: relative; border-radius: 22px; overflow: hidden; cursor: pointer; background: #17170f; aspect-ratio: 16/9;
+  transition: transform .35s cubic-bezier(.2,.6,.2,1); }
+.vcell:hover { transform: scale(1.018); }
+.vcell .thumb { position: absolute; inset: 0;
+  background: radial-gradient(80% 90% at 28% 18%, rgba(216,255,61,.24), transparent 58%),
+              radial-gradient(90% 90% at 82% 88%, rgba(244,241,234,.1), transparent 55%),
+              linear-gradient(200deg, transparent 50%, rgba(0,0,0,.5)); }
+.vcell .dur { position: absolute; top: 16px; right: 16px; font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: .1em; background: rgba(0,0,0,.55); color: rgba(244,241,234,.8); padding: 5px 10px; border-radius: 999px; }
+.vcell .play { position: absolute; inset: 0; display: grid; place-items: center; }
+.vcell .play i { width: 66px; height: 66px; border-radius: 50%; background: var(--lime); display: grid; place-items: center;
+  color: var(--ink); font-size: 19px; transition: transform .35s; box-shadow: 0 12px 40px rgba(216,255,61,.25); }
+.vcell:hover .play i { transform: scale(1.14); }
+.vcell .cap { position: absolute; left: 22px; bottom: 18px; right: 22px; }
+.vcell .cap b { display: block; font-size: 17px; letter-spacing: -0.025em; font-weight: 700; }
+.vcell .cap span { font-family: var(--mono); font-size: 9.5px; color: var(--d-mut); letter-spacing: .12em; text-transform: uppercase; }
+.vside { display: grid; gap: 20px; }
+.vside .vcell { aspect-ratio: auto; }
+.expand-ov { position: fixed; z-index: 90; border-radius: 22px; background: var(--lime); pointer-events: none;
+  transition: all .5s cubic-bezier(.7,0,.3,1); opacity: 0; }
+.expand-ov.go { border-radius: 0; opacity: 1; }
+
+/* ---- S9 FAQ: 아코디언 + URL 분기 ---- */
+.s9 .topics { display: inline-flex; background: var(--paper-3); border-radius: 999px; padding: 5px; gap: 2px; margin-bottom: 40px; }
+.s9 .topic { border: 0; background: transparent; padding: 11px 26px; border-radius: 999px; font-family: var(--sans);
+  font-size: 15px; font-weight: 600; color: var(--muted); cursor: pointer; transition: .15s; }
+.s9 .topic[aria-selected="true"] { background: var(--ink); color: var(--paper); font-weight: 700; }
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-item:first-of-type { border-top: 1px solid var(--line-2); }
+.faq-q { width: 100%; text-align: left; background: none; border: 0; font-family: var(--sans); cursor: pointer;
+  padding: 26px 48px 26px 8px; font-size: 18.5px; font-weight: 700; letter-spacing: -0.025em; color: var(--ink); position: relative; }
+.faq-q::after { content: "+"; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: 21px; font-weight: 400; color: var(--muted-2); transition: transform .3s, color .3s; }
+.faq-q[aria-expanded="true"]::after { transform: translateY(-50%) rotate(45deg); color: var(--ink); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height .4s cubic-bezier(.2,.6,.2,1); }
+.faq-a p { margin: 0; padding: 0 8px 28px; color: var(--muted); font-size: 15px; line-height: 1.8; max-width: 64ch; word-break: keep-all; }
+.s9 .url-demo { margin-top: 24px; font-family: var(--mono); font-size: 10.5px; color: var(--muted-2); letter-spacing: .05em; }
+.s9 .url-demo b { color: var(--ink); }
+
+/* ---- S10 최종 CTA: 마이크로만 ---- */
+.s10 { text-align: center; padding: 150px 0 140px; }
+.s10 .k { font-family: var(--mono); font-size: 10px; letter-spacing: .26em; color: var(--muted-2);
+  text-transform: uppercase; display: block; margin-bottom: 24px; }
+.s10 h2 { font-size: clamp(36px, 5.4vw, 66px); margin-bottom: 16px; letter-spacing: -0.045em; }
+.s10 p { color: var(--muted); margin: 0 0 42px; font-size: 16.5px; }
+
+/* ---- 모바일 ---- */
+@media (max-width: 900px) {
+  .s2__grid { grid-template-columns: 1fr; gap: 0; }
+  .s2__left { position: static; padding: 72px 0 8px; }
+  .s2__count { display: none; }
+  .s2__right { padding: 24px 0 72px; gap: 20px; }
+  .warn { opacity: 1; transform: none; }
+  .warn::before { opacity: 1; }
+  .s3__outer { height: auto; }
+  .s3__sticky { position: static; height: auto; padding: 72px 0; }
+  .s3__rail { overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; }
+  .step { scroll-snap-align: start; }
+  .s3__bar, .s3__cnt { display: none; }
+  .vgrid { grid-template-columns: 1fr; }
+  .s7 .irow { grid-template-columns: 1fr; gap: 5px; }
+  .mcard .detail { max-height: none; opacity: 1; margin-top: 14px; display: none; }
+  .mcard.open .detail { display: block; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문 바로가기</a>
+
+<header class="gnb">
+  <div class="gnb__in">
+    <a class="logo" href="index.html"><i></i>AI 빌더 그룹 <small>(가제·Q1)</small></a>
+    <button class="gnb__burger" aria-label="메뉴">☰</button>
+    <nav>
+      <a href="work.html">Work</a>
+      <a href="insight.html">Insight</a>
+      <a href="content.html">콘텐츠</a>
+    </nav>
+    <a class="btn btn--ink btn--sm" href="contact.html" data-track="cta_click" data-location="gnb">문의하기</a>
+  </div>
+</header>
+
+<main id="main" style="padding-top:0">
+
+<!-- ===== S1 Hero — 스태거 + 그라디언트 드리프트 ===== -->
+<section class="hero" style="padding:0">
+  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="wrap hero__in">
+    <div class="kicker st st1"><i></i>Vibe-coding Outsourcing Group</div>
+    <h1 class="st st2"><span class="w300">바이브 코딩으로,</span><br><mark>외주</mark>를 해드립니다</h1>
+    <p class="st st3">AI 시대에는 AI에 최적화된 개발자가 필요합니다.
+      검증된 빌더가 당신의 서비스에 맞춰 만듭니다.</p>
+    <div class="hero__cta st st4">
+      <a class="btn btn--ink" href="contact.html" data-track="cta_click" data-location="hero">프로젝트 문의 <span class="arr">→</span></a>
+      <span class="quiet">기획 — 목업 — 개발 — 이관</span>
+    </div>
+  </div>
+  <div class="hero__coords" aria-hidden="true">SEOUL, KR<br>EST. 2026</div>
+  <div class="hero__scroll">SCROLL</div>
+</section>
+
+<!-- ===== S2 문제 제기 — Fixed + 스크롤 연동 ===== -->
+<section class="s2">
+  <div class="wrap">
+    <div class="s2__grid">
+      <div class="s2__left">
+        <div class="eyebrow"><i></i>Why Careful <span class="no">— 01</span></div>
+        <h2>요즘 바이브 코딩 외주,<br>이런 곳은 조심하세요</h2>
+        <p class="note">스크롤을 내리면, 실제로 시장에서 벌어지고 있는 일들이 하나씩 나타납니다.</p>
+        <p class="s2__count"><b data-s2now>01</b> / 03</p>
+      </div>
+      <div class="s2__right">
+        <div class="warn" data-warn>
+          <span class="no">CASE 01</span>
+          <h3>포트폴리오 수백 개가<br>전부 목업인 업체</h3>
+          <p>실제 수행한 적 없는 프로젝트를 산업별로 만들어두고, 문의가 오면 실적처럼 보냅니다. "실서비스 URL을 보여달라"는 질문에 답하지 못합니다.</p>
+        </div>
+        <div class="warn" data-warn>
+          <span class="no">CASE 02</span>
+          <h3>모든 섹션이 똑같이<br>움직이는 사이트</h3>
+          <p>전 섹션 동일한 애니메이션 — AI로 한 번에 생성하고 손보지 않은 결과물의 전형적인 신호입니다. 자기 사이트에 시간을 쓰지 않는 팀이 고객 사이트에 시간을 쓸 리 없습니다.</p>
+        </div>
+        <div class="warn" data-warn>
+          <span class="no">CASE 03</span>
+          <h3>싼 가격만 내세우는<br>반값 외주</h3>
+          <p>"반값에 이상한 걸 만들 바에, 제값 주고 좋은 걸 만들겠다" — 한 번 겪어본 발주자들이 실제로 내리는 결론입니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S3 일하는 방식 — 세로 스크롤 → 가로 이동 ===== -->
+<div class="s3__outer" id="how">
+  <section class="s3 grain" style="padding:0">
+    <div class="s3__sticky">
+      <div class="s3__head">
+        <div>
+          <div class="eyebrow"><i></i>How We Work <span class="no">— 02</span></div>
+          <h2><span class="w300">그래서 우리는,</span><br>일하는 방식이 다릅니다</h2>
+        </div>
+        <span class="s3__cnt"><b data-s3now>01</b> / 04</span>
+      </div>
+      <div class="s3__rail" data-rail>
+        <div class="step">
+          <span class="no">01</span>
+          <h3>기획</h3>
+          <p>요구사항을 화면 목록과 기능 명세로 확정합니다. 여기서 정해진 범위가 이후 모든 판단의 기준선이 됩니다.</p>
+          <span class="out">산출물 — 기획서 · IA · 화면 정의</span>
+        </div>
+        <div class="step">
+          <span class="no">02</span>
+          <h3>디자인 · 목업</h3>
+          <p>기능이 동작하는 가상 사이트(목업)로 확인합니다. 그림이 아니라 실제로 눌러보고 결정하실 수 있습니다.</p>
+          <span class="out">산출물 — 동작 목업 · 디자인 시안</span>
+        </div>
+        <div class="step">
+          <span class="no">03</span>
+          <h3>개발</h3>
+          <p>확정된 시안과 화면상 100% 동일한 완성도로 구현합니다. 검색 최적화 세팅까지 기본입니다.</p>
+          <span class="out">산출물 — 배포 사이트 · SEO 세팅</span>
+        </div>
+        <div class="step">
+          <span class="no">04</span>
+          <h3>검수 · 이관</h3>
+          <p>단계마다 확인을 받고 진행하며, 완료 후 모든 계정과 권한을 안전하게 이전합니다.</p>
+          <span class="out">산출물 — 인계 문서 · 계정 이관</span>
+        </div>
+      </div>
+      <div class="s3__bar"><i data-railbar></i></div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== S4 검증 체계 — 의도적 정지 ===== -->
+<section class="s4">
+  <div class="wrap">
+    <div class="eyebrow"><i></i>Quality System <span class="no">— 03</span></div>
+    <h2>결과물이 상향 평준화되는 이유</h2>
+    <p class="sec-sub">화려한 말 대신, 구조로 보장합니다.</p>
+    <div class="vrow">
+      <span class="no">Q—01</span>
+      <h3>체계적 교육을<br>수료한 빌더</h3>
+      <p>실전 커리큘럼을 통과한 빌더만 프로젝트에 참여합니다. 도구를 아는 것과 제품을 완성해 본 것은 다릅니다.</p>
+    </div>
+    <div class="vrow">
+      <span class="no">Q—02</span>
+      <h3>똑빌더 시스템<br>밀착 관리</h3>
+      <p>진행 상황·품질·이슈를 전용 협업 시스템으로 관리합니다. 클라이언트는 단계마다 결과를 눈으로 확인합니다.</p>
+    </div>
+    <div class="vrow">
+      <span class="no">Q—03</span>
+      <h3>선별된 빌더<br>배정</h3>
+      <p>프로젝트 성격에 맞는 검증된 빌더를 선별해 배정합니다. 맞지 않는 사람이 배정되는 일을 구조적으로 막습니다.</p>
+    </div>
+    <p class="quiet">이 섹션에는 애니메이션이 없습니다 — 신뢰에 관한 정보는 차분하게. (의도적 정지 구간)</p>
+  </div>
+</section>
+
+<!-- ===== S5 맞춤 매칭 — 호버 확장 ===== -->
+<section class="s5">
+  <div class="wrap">
+    <div class="eyebrow"><i></i>Matching <span class="no">— 04</span></div>
+    <h2><span class="w300">개발사를 고르지 마세요.</span><br>맞는 개발자를 매칭해 드립니다</h2>
+    <p class="sec-sub">카드에 마우스를 올려보세요. (모바일: 탭)</p>
+    <div class="grid g3">
+      <div class="mcard" tabindex="0">
+        <div class="plus">+</div>
+        <span class="k">Match — 01</span>
+        <h3>랜딩 · 웹사이트</h3>
+        <p class="sub">브랜드 사이트, 수주용 랜딩</p>
+        <div class="detail">
+          <p>디자인 감도와 인터랙션 구현력이 검증된 빌더가 맡습니다. 전환 트래킹 설계까지 포함합니다.</p>
+          <span class="who">Builder — Design &amp; Interaction</span>
+        </div>
+      </div>
+      <div class="mcard" tabindex="0">
+        <div class="plus">+</div>
+        <span class="k">Match — 02</span>
+        <h3>SaaS · 플랫폼</h3>
+        <p class="sub">관리자·데이터 구조가 있는 서비스</p>
+        <div class="detail">
+          <p>데이터 모델링과 권한 설계 경험이 있는 빌더를 배정합니다. 규모가 크면 시니어 개발자와 투트랙으로.</p>
+          <span class="who">Builder — Data &amp; Architecture</span>
+        </div>
+      </div>
+      <div class="mcard" tabindex="0">
+        <div class="plus">+</div>
+        <span class="k">Match — 03</span>
+        <h3>AI 서비스</h3>
+        <p class="sub">LLM 연동, AI 기능 탑재</p>
+        <div class="detail">
+          <p>AI API 연동과 프롬프트 설계를 실무로 다뤄본 빌더가 맡습니다. PoC부터 단계적으로 검증합니다.</p>
+          <span class="who">Builder — LLM &amp; Evaluation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S6 Work 프리뷰 — 페이드인 + 패럴랙스 ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><i></i>Work <span class="no">— 05</span></div>
+        <h2>완성한 프로젝트</h2>
+      </div>
+      <a class="more-link" href="work.html">전체 보기</a>
+    </div>
+    <p class="sec-sub">실제로 수행한 프로젝트만 올립니다.</p>
+    <div class="grid g3">
+      <a class="wcard rv" href="work-detail.html" data-track="work_card">
+        <div class="ph live" data-label="Thumbnail — 에셋 교체 예정" style="background-image:url('https://images.unsplash.com/photo-1547658718-1cdaa0852790?w=1200&q=80&auto=format&fit=crop')"><span class="fx">W—001</span><div class="par"></div></div>
+        <div class="meta">
+          <div class="mrow"><span class="tag">AI Service</span><span class="yr">2026</span></div>
+          <h3>AI 상담 챗봇 구축</h3><p>프로토타입 2주 완성 · 빌더 3인</p>
+        </div>
+      </a>
+      <a class="wcard rv d1" href="work-detail.html">
+        <div class="ph live" data-label="Thumbnail" style="background-image:url('https://images.unsplash.com/photo-1586804186557-8939a72b2239?w=1200&q=80&auto=format&fit=crop')"><span class="fx">W—002</span><div class="par"></div></div>
+        <div class="meta">
+          <div class="mrow"><span class="tag">Landing</span><span class="yr">2026</span></div>
+          <h3>수주용 브랜드 랜딩</h3><p>전환 트래킹 설계 포함 · 빌더 2인</p>
+        </div>
+      </a>
+      <a class="wcard rv d2" href="work-detail.html">
+        <div class="ph live" data-label="Thumbnail" style="background-image:url('https://images.unsplash.com/photo-1588200908342-23b585c03e26?w=1200&q=80&auto=format&fit=crop')"><span class="fx">W—003</span><div class="par"></div></div>
+        <div class="meta">
+          <div class="mrow"><span class="tag">Platform</span><span class="yr">2026</span></div>
+          <h3>콘텐츠 관리 플랫폼</h3><p>관리자·에디터 구축 · 빌더 3인</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S7 Insight 프리뷰 — 정지 ===== -->
+<section class="s7" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><i></i>Insight <span class="no">— 06</span></div>
+        <h2>우리의 생각</h2>
+      </div>
+      <a class="more-link" href="insight.html">전체 보기</a>
+    </div>
+    <p class="sec-sub"></p>
+    <a class="irow" href="insight-detail.html">
+      <span class="cat">발주 가이드</span>
+      <span class="t">바이브 코딩 외주, 잘하는 곳과 못하는 곳의 차이</span>
+      <span class="d">2026.08.11</span>
+    </a>
+    <a class="irow" href="insight-detail.html">
+      <span class="cat">일하는 방식</span>
+      <span class="t">우리가 3주 만에 랜딩 페이지를 만드는 순서</span>
+      <span class="d">2026.08.09</span>
+    </a>
+    <a class="irow" href="insight-detail.html">
+      <span class="cat">AI 활용</span>
+      <span class="t">새 AI 툴을 실무에 붙일 때 우리가 확인하는 것들</span>
+      <span class="d">2026.08.07</span>
+    </a>
+  </div>
+</section>
+
+<!-- ===== S8 콘텐츠·유튜브 — 퍼짐 전환 ===== -->
+<section class="s8 grain">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow"><i></i>Content <span class="no">— 07</span></div>
+        <h2>영상으로 보는 우리의 작업</h2>
+      </div>
+      <a class="more-link" href="content.html">콘텐츠 탭</a>
+    </div>
+    <p class="sec-sub">클릭하면 퍼지는 전환과 함께 이동합니다. (UTM 부착 — 콘솔 확인)</p>
+    <div class="vgrid">
+      <div class="vcell" data-expand data-track="youtube_outbound" data-slug="featured">
+        <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1669723008519-3b5043b5b826?w=1200&q=80&auto=format&fit=crop');background-size:cover;background-position:center;opacity:.75"></div>
+        <span class="dur">12:40</span>
+        <div class="play"><i>▶</i></div>
+        <div class="cap"><b>바이브 코딩으로 실제 외주를 하는 방법</b><span>Featured</span></div>
+      </div>
+      <div class="vside">
+        <div class="vcell" data-expand style="aspect-ratio:16/8">
+          <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1753715613373-90b1ea010731?w=1200&q=80&auto=format&fit=crop');background-size:cover;background-position:center;opacity:.75"></div><span class="dur">08:15</span><div class="play"><i>▶</i></div>
+          <div class="cap"><b>AI 네이티브로 일한다는 것</b></div>
+        </div>
+        <div class="vcell" data-expand style="aspect-ratio:16/8">
+          <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1772115428479-9045bc0c2a3d?w=1200&q=80&auto=format&fit=crop');background-size:cover;background-position:center;opacity:.75"></div><span class="dur">10:02</span><div class="play"><i>▶</i></div>
+          <div class="cap"><b>외주 견적, 이렇게 잡습니다</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S9 FAQ — 아코디언 + URL 분기 ===== -->
+<section class="s9" id="faq">
+  <div class="wrap">
+    <div class="eyebrow"><i></i>FAQ <span class="no">— 08</span></div>
+    <h2>자주 묻는 질문</h2>
+    <p class="sec-sub">토픽을 전환하면 URL이 바뀝니다 — 트래킹을 위한 설계입니다.</p>
+
+    <div class="topics" role="tablist">
+      <button class="topic" role="tab" aria-selected="true" data-topic="inquiry" data-track="faq_topic_change">외주 문의</button>
+      <button class="topic" role="tab" aria-selected="false" data-topic="process" data-track="faq_topic_change">진행 방식</button>
+    </div>
+
+    <div data-panel="inquiry">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fa1">바이브 코딩으로 만들면 품질이 괜찮나요?</button>
+        <div class="faq-a" id="fa1" role="region"><p>도구가 아니라 만드는 사람이 품질을 결정합니다. 우리는 교육을 수료하고 검증된 빌더만 배정하고, 전용 시스템으로 진행 과정을 관리해 결과물을 상향 평준화합니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fa2">기간은 얼마나 걸리나요?</button>
+        <div class="faq-a" id="fa2" role="region"><p>규모에 따라 다르지만, 랜딩 페이지 기준 제작 2주 + 환경 세팅·이관 1주가 일반적입니다. 기획 단계에서 일정을 확정해 드립니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fa3">어떤 개발자가 작업하나요?</button>
+        <div class="faq-a" id="fa3" role="region"><p>프로젝트 성격에 맞는 빌더를 선별해 배정합니다. 규모가 큰 프로젝트는 시니어 개발자가 함께 투입되는 투트랙으로 진행합니다.</p></div>
+      </div>
+    </div>
+
+    <div data-panel="process" hidden>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fb1">진행 단계는 어떻게 되나요?</button>
+        <div class="faq-a" id="fb1" role="region"><p>기획 → 디자인(목업) → 개발 순서로 진행하며, 각 단계마다 확인을 받고 다음으로 넘어갑니다. 디자인 단계에서는 실제로 눌러볼 수 있는 목업을 드립니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fb2">수정 요청은 어디까지 가능한가요?</button>
+        <div class="faq-a" id="fb2" role="region"><p>문구·이미지 교체 같은 경미한 수정은 범위 내에서 반영합니다. 화면 추가나 기능 변경은 일정·비용과 함께 별도로 안내드립니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" aria-controls="fb3">완료 후 유지보수는요?</button>
+        <div class="faq-a" id="fb3" role="region"><p>납품 후 30일 무상 하자보수가 기본입니다. 이후 기능 추가·운영 관리는 별도 유지보수 계약으로 진행합니다.</p></div>
+      </div>
+    </div>
+
+    <p class="url-demo">현재 URL: <b data-urlnow>…/faq/inquiry</b> — 실서비스에서는 /faq/inquiry ↔ /faq/process 경로 분기 (목업은 해시로 시뮬레이션)</p>
+  </div>
+</section>
+
+<!-- ===== S10 최종 CTA — 마이크로만 ===== -->
+<section class="s10">
+  <div class="wrap">
+    <span class="k">Start a Project</span>
+    <h2><span class="w300">만들고 싶은 것이</span><br>있으신가요?</h2>
+    <p>지금 프로젝트를 문의해 주세요. 빠르게 연락드립니다.</p>
+    <a class="btn btn--lime" href="contact.html" data-track="cta_click" data-location="footer_cta" style="font-size:17px;padding:18px 38px">프로젝트 문의 <span class="arr">→</span></a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="ft__top">
+      <div class="ft__brand">
+        <a class="logo" href="index.html"><i></i>AI 빌더 그룹 <small>(가제)</small></a>
+        <p>AI 시대에 최적화된 바이브코딩 외주 전문 그룹</p>
+      </div>
+      <nav class="ft__nav">
+        <a href="work.html">Work</a><a href="insight.html">Insight</a><a href="content.html">콘텐츠</a><a href="contact.html">문의하기</a>
+      </nav>
+    </div>
+    <p class="ft__biz">
+      <b>AI 빌더 그룹</b> (상호·대표·사업자등록번호 — 자료 수령 후 기입)<br>
+      문의 contact@_______ (pluug 장애 대비 대체 경로 · 주소 확정 전)
+    </p>
+    <div class="ft__bottom">
+      <span>© 2026 AI Builder Group</span>
+      <a href="privacy.html">개인정보처리방침</a>
+    </div>
+  </div>
+</footer>
+
+<div class="expand-ov" data-ov></div>
+
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mobile = window.matchMedia('(max-width: 900px)');
+
+  /* S2: 스크롤 위치에 따라 카드 활성 + 카운터 */
+  var warns = document.querySelectorAll('[data-warn]');
+  var s2now = document.querySelector('[data-s2now]');
+  function s2Update() {
+    if (mobile.matches) { warns.forEach(function (w) { w.classList.add('active'); }); return; }
+    var mid = window.innerHeight * 0.55, act = 0;
+    warns.forEach(function (w, i) {
+      var r = w.getBoundingClientRect();
+      var on = r.top < mid && r.bottom > mid * 0.5;
+      w.classList.toggle('active', on);
+      if (on) act = i;
+    });
+    if (s2now) s2now.textContent = '0' + (act + 1);
+  }
+  window.addEventListener('scroll', s2Update, { passive: true }); s2Update();
+
+  /* S3: 세로 스크롤 → 레일 가로 이동 + 스텝 카운터 */
+  var outer = document.querySelector('.s3__outer');
+  var rail = document.querySelector('[data-rail]');
+  var bar = document.querySelector('[data-railbar]');
+  var s3now = document.querySelector('[data-s3now]');
+  function s3Update() {
+    if (mobile.matches || reduced || !outer || !rail) return;
+    var r = outer.getBoundingClientRect();
+    var total = r.height - window.innerHeight;
+    var p = Math.min(1, Math.max(0, -r.top / total));
+    var dist = rail.scrollWidth - window.innerWidth;
+    rail.style.transform = 'translateX(' + (-p * dist) + 'px)';
+    if (bar) bar.style.width = (p * 100) + '%';
+    if (s3now) s3now.textContent = '0' + Math.min(4, Math.floor(p * 4) + 1);
+  }
+  window.addEventListener('scroll', s3Update, { passive: true }); s3Update();
+
+  /* S5: 모바일 탭 토글 */
+  document.querySelectorAll('.mcard').forEach(function (c) {
+    c.addEventListener('click', function () { if (mobile.matches) c.classList.toggle('open'); });
+  });
+
+  /* S6: 카드 이미지 패럴랙스 */
+  var pars = document.querySelectorAll('.wcard .par');
+  function parUpdate() {
+    if (reduced || mobile.matches) return;
+    pars.forEach(function (p) {
+      var r = p.closest('.ph').getBoundingClientRect();
+      var t = (r.top + r.height / 2 - window.innerHeight / 2) / window.innerHeight;
+      p.style.transform = 'translateY(' + (t * 26) + 'px)';
+    });
+  }
+  window.addEventListener('scroll', parUpdate, { passive: true }); parUpdate();
+
+  /* S8: 퍼짐 전환 → content.html 이동 */
+  var ov = document.querySelector('[data-ov]');
+  document.querySelectorAll('[data-expand]').forEach(function (v) {
+    v.addEventListener('click', function () {
+      window.track('youtube_outbound', { utm: 'utm_source=builder-group&utm_medium=content' });
+      if (reduced) { location.href = 'content.html'; return; }
+      var r = v.getBoundingClientRect();
+      ov.style.cssText = 'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;opacity:1;';
+      requestAnimationFrame(function () {
+        ov.classList.add('go');
+        ov.style.cssText += 'left:0;top:0;width:100vw;height:100vh;';
+      });
+      setTimeout(function () { location.href = 'content.html'; }, 520);
+    });
+  });
+
+  /* S9: FAQ 아코디언 + URL 해시 분기 */
+  document.querySelectorAll('.faq-q').forEach(function (q) {
+    q.addEventListener('click', function () {
+      var open = q.getAttribute('aria-expanded') === 'true';
+      q.setAttribute('aria-expanded', String(!open));
+      var a = document.getElementById(q.getAttribute('aria-controls'));
+      a.style.maxHeight = open ? '0' : a.scrollHeight + 'px';
+    });
+  });
+  var urlNow = document.querySelector('[data-urlnow]');
+  function setTopic(t) {
+    document.querySelectorAll('.topic').forEach(function (b) {
+      b.setAttribute('aria-selected', String(b.dataset.topic === t));
+    });
+    document.querySelectorAll('[data-panel]').forEach(function (p) {
+      p.hidden = p.dataset.panel !== t;
+    });
+    if (location.hash !== '#faq-' + t) history.replaceState(null, '', '#faq-' + t);
+    if (urlNow) urlNow.textContent = '…/faq/' + t;
+  }
+  document.querySelectorAll('.topic').forEach(function (b) {
+    b.addEventListener('click', function () { setTopic(b.dataset.topic); });
+  });
+  if (location.hash.indexOf('#faq-') === 0) setTopic(location.hash.replace('#faq-', ''));
+})();
+</script>
+</body>
+</html>
