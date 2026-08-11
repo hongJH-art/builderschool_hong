@@ -296,7 +296,9 @@ body.dark .logo { color: var(--paper); }
 @media (max-width: 768px) {
   .gnb nav, .gnb .btn { display: none; }
   .gnb__burger { display: block; }
-  .gnb.menu-open { background: var(--paper); }
+  /* v22: backdrop-filter가 fixed 메뉴의 기준 박스를 헤더로 바꿔 배경판이 무너지는 버그 방지 */
+  .gnb.menu-open { background: var(--paper); backdrop-filter: none; }
+  body.no-scroll { overflow: hidden; }
   .gnb.menu-open nav { display: flex; position: fixed; inset: 72px 0 0; background: var(--paper);
     flex-direction: column; padding: 36px 28px; gap: 4px; border: 0; border-radius: 0; backdrop-filter: none; }
   /* v22: 다크 페이지(콘텐츠 탭 등)에서 열어도 밝은 메뉴 배경 위 글자가 보이도록 색 고정 */

@@ -15,8 +15,10 @@
   /* 모바일 메뉴 */
   var burger = document.querySelector('.gnb__burger');
   if (burger) burger.addEventListener('click', function () {
-    gnb.classList.toggle('menu-open');
-    burger.textContent = gnb.classList.contains('menu-open') ? '✕' : '☰';
+    var open = gnb.classList.toggle('menu-open');
+    burger.textContent = open ? '✕' : '☰';
+    /* v22: 오버레이 열림 시 body 스크롤 잠금 (PRD FR-C-04) */
+    document.body.classList.toggle('no-scroll', open);
   });
 
   /* 리빌 (IntersectionObserver) */
