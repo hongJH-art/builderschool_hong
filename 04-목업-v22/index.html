@@ -232,8 +232,10 @@
 .s2__left .note { margin-top: 20px; color: var(--muted); font-size: 15px; max-width: 38ch; word-break: keep-all; }
 .s2__icons { display: flex; gap: 12px; margin-top: 34px; }
 .s2__icons span { width: 58px; height: 58px; border-radius: 18px; background: var(--paper-2);
-  border: 1px solid var(--line); display: grid; place-items: center; font-size: 27px;
+  border: 1px solid var(--line); display: grid; place-items: center; color: var(--ink);
   filter: grayscale(1) opacity(.45); transition: all .4s var(--ease-in); }
+/* v22: 컬러 스티커 스타일 SVG 아이콘 (가짜 화면 · 복붙 반복 · 반값 태그) — 비활성 시 grayscale 필터로 무채색 */
+.s2__icons span svg { width: 28px; height: 28px; }
 .s2__icons span.on { background: var(--lime); border-color: var(--ink); filter: none;
   transform: rotate(-6deg) scale(1.12); box-shadow: 0 12px 26px rgba(14,14,12,.16); }
 .s2__count { margin-top: 40px; font-family: var(--mono); font-size: 12px; letter-spacing: .2em; color: var(--muted-2); }
@@ -577,7 +579,31 @@
 .wg .wcard:nth-child(2) .slot { aspect-ratio: 16/12; }
 .wg .wcard:nth-child(3) .slot { aspect-ratio: 16/9; }
 .wg .wcard:nth-child(1) h3 { font-size: 24px; }
-@media (max-width: 900px) { .wg .wcard { grid-column: 1 / -1 !important; } }
+/* v22: 모바일 — Work 프리뷰: 대표작 1장 크게 + 아래 2단 그리드 */
+@media (max-width: 900px) {
+  .wg { grid-template-columns: 1fr 1fr; gap: 26px 14px; }
+  .wg .wcard:nth-child(1) { grid-column: 1 / -1; }
+  .wg .wcard:nth-child(2) { grid-column: auto; align-self: stretch; }
+  .wg .wcard:nth-child(3) { grid-column: auto; }
+  .wg .wcard:nth-child(1) .slot { aspect-ratio: 16/10; }
+  .wg .wcard:nth-child(2) .slot, .wg .wcard:nth-child(3) .slot { aspect-ratio: 4/3; }
+  .wg .wcard:nth-child(1) h3 { font-size: 19px; }
+  /* 태그·기간을 이미지 위 오버레이 배지로 */
+  .wg .wcard .meta { position: relative; }
+  .wg .wcard .mrow { position: absolute; left: 10px; right: 10px; bottom: calc(100% + 10px); margin: 0; z-index: 4; }
+  .wg .wcard .mrow .tag { box-shadow: 0 6px 14px rgba(14,14,12,.28); }
+  .wg .wcard:nth-child(1) .mrow .yr { background: rgba(14,14,12,.6); color: rgba(244,241,234,.92);
+    padding: 5px 11px; border-radius: 999px; }
+  /* 하단 2단 소형 카드 — 압축 메타, 브라우저 바 숨김 */
+  .wg .wcard:nth-child(n+2) .bf__bar { display: none; }
+  .wg .wcard:nth-child(n+2) .meta { padding: 12px 2px 0; }
+  .wg .wcard:nth-child(n+2) .mrow { margin-bottom: 6px; }
+  .wg .wcard:nth-child(n+2) .mrow .tag { font-size: 10px; padding: 4px 9px; }
+  .wg .wcard:nth-child(n+2) .mrow .yr { display: none; }
+  .wg .wcard:nth-child(n+2) h3 { font-size: 15.5px; margin: 0 0 3px; }
+  .wg .wcard:nth-child(n+2) p { font-size: 12.5px; line-height: 1.5;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+}
 .wcard .par { position: absolute; inset: -12% 0; will-change: transform;
   background: radial-gradient(70% 60% at 70% 30%, rgba(216,255,61,.12), transparent 60%); pointer-events: none; z-index: 3; }
 
@@ -652,14 +678,24 @@
   .s2__left { position: static; padding: 72px 0 8px; }
   .s2__count { display: none; }
   .s2__right { padding: 24px 0 72px; gap: 20px; }
-  .warn { opacity: 1; transform: none; }
-  .warn::before { opacity: 1; }
+  /* v22: 모바일에서도 스크롤 연동 활성화 유지 — 비활성 카드는 은은하게만 감춤 */
+  .warn { opacity: .45; }
   .s3__outer { height: auto; }
   .s3__sticky { position: static; height: auto; padding: 72px 0; }
   .s3__rail { overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; }
   .step { scroll-snap-align: start; }
   .s3__bar, .s3__cnt { display: none; }
   .vgrid { grid-template-columns: 1fr; }
+  /* v22: 영상 — 대표 1개 풀폭 + 아래 2단 (PC 위계를 모바일로 접기) */
+  .vcell .cap b { font-size: 16px; }
+  .vcell .cap span { font-size: 13px; letter-spacing: .06em; margin-top: 3px; display: inline-block; }
+  .vside { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .vside .vcell { aspect-ratio: 16/10 !important; border-radius: 16px; }
+  .vside .vcell .cap { left: 10px; right: 10px; bottom: 9px; }
+  .vside .vcell .cap b { font-size: 11.5px; line-height: 1.35; text-shadow: 0 1px 6px rgba(0,0,0,.7);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .vside .vcell .dur { top: 8px; right: 8px; font-size: 9.5px; padding: 3px 7px; }
+  .vside .vcell .play i { width: 38px; height: 38px; font-size: 13px; }
   .mcard { min-height: 320px; }
   .mcard .detail { max-height: none; opacity: 1; margin-top: 14px; display: none; }
   .mcard.open .detail { display: block; }
@@ -1011,7 +1047,9 @@
         <h2>요즘 바이브 코딩 외주,<br>이런 곳은 조심하세요</h2>
         <p class="note">스크롤을 내리면, 실제로 시장에서 벌어지고 있는 일들이 하나씩 나타납니다.</p>
         <div class="s2__icons" aria-hidden="true">
-          <span data-ic>🎭</span><span data-ic>🔁</span><span data-ic>💸</span>
+          <span data-ic><svg viewBox="0 0 24 24"><rect x="2.5" y="3.5" width="19" height="17" rx="2.5" fill="#FFFFFF" stroke="#0E0E0C" stroke-width="1.6"/><path d="M2.5 6a2.5 2.5 0 0 1 2.5-2.5h14a2.5 2.5 0 0 1 2.5 2.5v2.5h-19z" fill="#2F80EA" stroke="#0E0E0C" stroke-width="1.6"/><circle cx="5.8" cy="6" r=".9" fill="#FFFFFF"/><circle cx="8.6" cy="6" r=".9" fill="#FFFFFF"/><g stroke="#E5484D" stroke-width="2.5" stroke-linecap="round"><line x1="9.5" y1="12.5" x2="14.5" y2="17.5"/><line x1="14.5" y1="12.5" x2="9.5" y2="17.5"/></g></svg></span>
+          <span data-ic><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><g stroke="#2F80EA" stroke-width="2.5"><polyline points="17 2.5 21 6.5 17 10.5"/><path d="M3 11v-.5a4 4 0 0 1 4-4h14"/></g><g stroke="#F5A623" stroke-width="2.5"><polyline points="7 21.5 3 17.5 7 13.5"/><path d="M21 13v.5a4 4 0 0 1-4 4H3"/></g></svg></span>
+          <span data-ic><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.83z" fill="#F5C542" stroke="#0E0E0C" stroke-width="1.6"/><circle cx="7" cy="7" r="1.5" fill="#FFFFFF" stroke="#0E0E0C" stroke-width="1.2"/><line x1="10.3" y1="17.7" x2="17.7" y2="10.3" stroke="#E5484D" stroke-width="2.5" stroke-linecap="round"/></svg></span>
         </div>
         <p class="s2__count"><b data-s2now>01</b> / 03</p>
       </div>
@@ -1418,8 +1456,8 @@
   var warns = document.querySelectorAll('[data-warn]');
   var s2now = document.querySelector('[data-s2now]');
   function s2Update() {
-    if (mobile.matches) { warns.forEach(function (w) { w.classList.add('active'); }); return; }
-    var mid = window.innerHeight * 0.55, act = 0;
+    /* v22: 모바일에서도 스크롤 연동 동작 — 모바일은 화면 아래쪽(72%)에서 전환 */
+    var mid = window.innerHeight * (mobile.matches ? 0.72 : 0.55), act = 0;
     warns.forEach(function (w, i) {
       var r = w.getBoundingClientRect();
       var on = r.top < mid && r.bottom > mid * 0.5;
