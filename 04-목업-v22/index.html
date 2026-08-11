@@ -503,6 +503,17 @@
   .s4x__stats b { font-size: 40px; }
   .s4x__stats b::after { height: 12px; bottom: 3px; }
 }
+/* v22: 모바일 — 매칭 3종(S5)도 가로 스와이프 캐러셀 */
+@media (max-width: 960px) {
+  .s5 .g3 { display: grid; grid-template-columns: repeat(3, min(78vw, 420px)); gap: 16px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 32px;
+    margin: 0 -32px; padding: 0 32px 8px; scrollbar-width: none; }
+  .s5 .g3::-webkit-scrollbar { display: none; }
+  .s5 .mcard { scroll-snap-align: start; }
+}
+@media (max-width: 600px) {
+  .s5 .g3 { margin: 0 -20px; padding: 0 20px 8px; scroll-padding: 0 20px; }
+}
 /* ---- S5 맞춤 매칭 ---- */
 .s5 { background: var(--paper-3); border-block: 1px solid var(--line); }
 .mcard { position: relative; border-radius: 24px; overflow: hidden; cursor: pointer; min-height: 400px;
@@ -1443,21 +1454,33 @@
     c.addEventListener('click', function () { if (mobile.matches) c.classList.toggle('open'); });
   });
 
-  /* v22: 검수 캐러셀 — 카드 탭 시 해당 카드로 슬라이드, 정렬된 카드 탭 시 다음 카드로 (모바일 ≤960px) */
+  /* v22: 모바일 캐러셀 탭 슬라이드 (≤960px) — 검수(S4)·매칭(S5) 공용
+     옆 카드 탭 → 해당 카드로 슬라이드 / 정렬된 카드 탭 → 검수는 다음 카드로, 매칭은 기존 상세 토글 유지 */
   (function () {
     var cmq = window.matchMedia('(max-width: 960px)');
-    var grid = document.querySelector('.s4x__grid');
-    if (!grid) return;
-    var cards = Array.prototype.slice.call(grid.querySelectorAll('.s4x-card'));
-    cards.forEach(function (card, i) {
-      card.addEventListener('click', function () {
-        if (!cmq.matches) return;
-        var pad = parseFloat(getComputedStyle(grid).scrollPaddingLeft) || 0;
-        var atSnap = Math.abs(card.getBoundingClientRect().left - grid.getBoundingClientRect().left - pad) < 24;
-        var target = atSnap ? cards[(i + 1) % cards.length] : card;
-        target.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    function isAtSnap(grid, card) {
+      var pad = parseFloat(getComputedStyle(grid).scrollPaddingLeft) || 0;
+      return Math.abs(card.getBoundingClientRect().left - grid.getBoundingClientRect().left - pad) < 24;
+    }
+    function slideTo(card) { card.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' }); }
+    var s4grid = document.querySelector('.s4x__grid');
+    if (s4grid) {
+      var s4cards = Array.prototype.slice.call(s4grid.querySelectorAll('.s4x-card'));
+      s4cards.forEach(function (card, i) {
+        card.addEventListener('click', function () {
+          if (!cmq.matches) return;
+          slideTo(isAtSnap(s4grid, card) ? s4cards[(i + 1) % s4cards.length] : card);
+        });
       });
-    });
+    }
+    var s5grid = document.querySelector('.s5 .g3');
+    if (s5grid) s5grid.addEventListener('click', function (e) {
+      if (!cmq.matches) return;
+      var card = e.target.closest('.mcard');
+      if (!card || isAtSnap(s5grid, card)) return; /* 정렬된 카드 탭은 기존 상세 토글로 */
+      e.stopPropagation();
+      slideTo(card);
+    }, true);
   })();
 
   /* S6 패럴랙스 */
