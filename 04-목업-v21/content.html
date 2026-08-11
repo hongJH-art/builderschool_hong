@@ -239,35 +239,15 @@ footer { background: #131310; border-top-color: var(--d-line); }
     }
     setDeck(0);
     flows.push(f);
-    /* 보이는 동안에만 로테이션 — 진입 시점부터 카운트해 이탈 전 최소 1회 전환 보장 */
-    if (!reduce && decks.length > 1 && 'IntersectionObserver' in window) {
-      var timer = null, first = null, period = ROT[pid] || 5000;
+    /* 문구 로테이션 — 2.6초 첫 전환 후 기본 주기 반복. 백그라운드 탭에서는 전환 건너뜀 */
+    if (!reduce && decks.length > 1) {
+      var period = ROT[pid] || 5000;
       var swap = function () {
+        if (document.hidden) return;
         txt.style.opacity = 0;
         setTimeout(function () { setDeck((f.di + 1) % decks.length); txt.style.opacity = 1; }, 470);
       };
-      new IntersectionObserver(function (es) {
-        es.forEach(function (e) {
-          if (e.isIntersecting && !timer && !first) {
-            /* 첫 전환은 2.6초로 당겨 예고 — 이후부터 기본 주기 */
-            first = setTimeout(function () {
-              swap(); first = null;
-              timer = setInterval(swap, period);
-            }, 2600);
-          } else if (!e.isIntersecting) {
-            if (first) { clearTimeout(first); first = null; }
-            if (timer) { clearInterval(timer); timer = null; }
-          }
-        });
-      }, { rootMargin: '80px' }).observe(txt.closest('svg'));
-      /* 탭 백그라운드 전환 시 타이머 정지 + 페이드 중 상태 복구 (복귀 시 IO가 재시작) */
-      document.addEventListener('visibilitychange', function () {
-        if (document.hidden) {
-          if (first) { clearTimeout(first); first = null; }
-          if (timer) { clearInterval(timer); timer = null; }
-          txt.style.opacity = 1;
-        }
-      });
+      setTimeout(function () { swap(); setInterval(swap, period); }, 2600);
     }
   });
   if (reduce || !flows.length) return;
