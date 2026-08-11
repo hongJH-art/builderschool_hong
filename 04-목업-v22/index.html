@@ -99,8 +99,15 @@
 /* v22: 모바일 — 스트림을 숨기지 않고 카피 아래 풀블리드 밴드로 재배치 (PC 컨셉 유지) */
 @media (max-width: 960px) {
   .hero { min-height: auto; display: flex; flex-direction: column; align-items: stretch; }
-  .hero__in { order: 1; padding: 104px 0 4px; }
-  .streamwrap { order: 2; }
+  /* 순서: 카피 → 스트림 → CTA(한 줄) → 신뢰 지표. hero__in을 해체(display:contents)해 개별 order 부여 */
+  .hero__in { display: contents; }
+  .h1-over { order: 1; align-self: flex-start; margin: 104px 32px 0; }
+  .hero h1 { order: 2; margin: 0 32px 18px; }
+  .hero p { order: 3; margin: 0 32px 26px; }
+  .streamwrap { order: 4; }
+  .hero-ctas { order: 6; margin: 28px 32px 0; }
+  .hero p.hero-proof { order: 7; margin: 16px 32px 36px; }
+  .h1-over, .hero h1, .hero p, .hero-ctas { position: relative; z-index: 2; }
   .hero__scroll { display: none; }
   .streamwrap { position: relative; inset: auto; display: block; height: 44vh; min-height: 320px; max-height: 440px;
     -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 56px, #000 calc(100% - 48px), transparent);
@@ -115,12 +122,15 @@
 @media (max-width: 640px) {
   .stream { left: -22vw; right: -22vw; }
   .stream .col--slow { display: none; }
-  .hero h1 { font-size: clamp(34px, 10.6vw, 46px); margin-bottom: 20px; }
-  .h1-over { font-size: 22px; }
+  .hero h1 { font-size: clamp(34px, 10.6vw, 46px); margin: 0 20px 16px; }
+  .h1-over { font-size: 22px; margin: 96px 20px 0; }
   .h1-over i { width: 24px; height: 24px; font-size: 12px; }
-  .hero p { margin-bottom: 28px; }
-  .hero-ctas { gap: 18px; }
-  .hero-ctas .btn--ink { flex: 1 1 100%; justify-content: center; }
+  .hero p { margin: 0 20px 22px; }
+  /* CTA 2종을 한 줄에 — 주 버튼 축소 */
+  .hero-ctas { margin: 24px 20px 0; flex-wrap: nowrap; gap: 16px; }
+  .hero-ctas .btn--ink { padding: 12px 20px; font-size: 14.5px; flex: none; }
+  .cta-sub { font-size: 14px; }
+  .hero p.hero-proof { margin: 14px 20px 32px; font-size: 13px; gap: 10px; }
 }
 
 /* ── v19: 섹션 이음새 리본 — 히어로는 비우고, 섹션 경계를 곡선 리본이 가로지름 ── */
@@ -377,7 +387,10 @@
   box-shadow: 0 18px 40px rgba(14,14,12,.3); }
 .hero-real i { font-style: normal; width: 26px; height: 26px; border-radius: 50%; background: var(--lime); color: var(--ink);
   display: grid; place-items: center; font-size: 14px; font-weight: 900; }
-@media (max-width: 900px) { .hero-real { right: 16px; bottom: 24px; font-size: 14px; } }
+/* v22: 모바일 — 배지를 플렉스 흐름에 편입, 스트림 밴드 하단에 겹치게 */
+@media (max-width: 960px) { .hero-real { position: static; order: 5; align-self: flex-end;
+  margin: -56px 20px 0 0; font-size: 14px; z-index: 6; } }
+@media (max-width: 640px) { .hero-real { margin: -50px 14px 0 0; font-size: 13px; padding: 11px 18px 11px 12px; } }
 
 /* 라우렐 — 카드 위 여백에 뜨는 수상 마크 */
 .laurbox { display: flex; justify-content: center; align-items: flex-end; min-height: 118px; padding-bottom: 10px; }
@@ -466,13 +479,27 @@
 .s4x__stats b em { font-style: normal; font-family: var(--sans); font-size: 20px; font-weight: 800; margin-left: 3px; }
 .s4x__stats span { display: block; margin-top: 12px; font-size: 15.5px; color: var(--ink-2); font-weight: 700; letter-spacing: -0.02em; }
 @media (max-width: 900px) { .s4x__stats { grid-template-columns: repeat(2, 1fr); } }
-/* v22: 라우렐 3개는 첫 줄에 나란히, 카드는 전체 폭 */
-@media (max-width: 960px) { .s4x__grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .s4x-card { grid-column: 1 / -1; }
-  .s4x__head { flex-direction: column; align-items: flex-start; } .s4x__head p { text-align: left; } }
+/* v22: 모바일 — 검수 3종을 가로 스와이프 캐러셀로 (라우렐+카드 쌍 유지, 세로 길이 1/3) */
+@media (max-width: 960px) {
+  .s4x__grid { display: grid; grid-template-rows: auto 1fr;
+    grid-template-columns: repeat(3, min(78vw, 420px)); gap: 0 16px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 32px;
+    margin: 0 -32px; padding: 0 32px 8px; scrollbar-width: none; }
+  .s4x__grid::-webkit-scrollbar { display: none; }
+  .laurbox:nth-child(1) { grid-row: 1; grid-column: 1; }
+  .laurbox:nth-child(2) { grid-row: 1; grid-column: 2; }
+  .laurbox:nth-child(3) { grid-row: 1; grid-column: 3; }
+  .s4x-card:nth-child(4) { grid-row: 2; grid-column: 1; }
+  .s4x-card:nth-child(5) { grid-row: 2; grid-column: 2; }
+  .s4x-card:nth-child(6) { grid-row: 2; grid-column: 3; }
+  .s4x-card { scroll-snap-align: start; min-height: 400px; }
+  .laurbox { padding: 6px 0 10px; min-height: 0; }
+  .s4x__head { flex-direction: column; align-items: flex-start; } .s4x__head p { text-align: left; }
+  .s4x__head::after { content: "옆으로 넘겨 확인하세요 →"; font-family: var(--mono); font-size: 11px;
+    letter-spacing: .12em; color: var(--muted-2); margin-top: 6px; }
+}
 @media (max-width: 600px) {
-  .s4x__grid { grid-template-columns: 1fr; }
-  .laurbox { padding: 0; }
+  .s4x__grid { margin: 0 -20px; padding: 0 20px 8px; scroll-padding: 0 20px; }
   .s4x__stats b { font-size: 40px; }
   .s4x__stats b::after { height: 12px; bottom: 3px; }
 }
@@ -1415,6 +1442,23 @@
   document.querySelectorAll('.mcard').forEach(function (c) {
     c.addEventListener('click', function () { if (mobile.matches) c.classList.toggle('open'); });
   });
+
+  /* v22: 검수 캐러셀 — 카드 탭 시 해당 카드로 슬라이드, 정렬된 카드 탭 시 다음 카드로 (모바일 ≤960px) */
+  (function () {
+    var cmq = window.matchMedia('(max-width: 960px)');
+    var grid = document.querySelector('.s4x__grid');
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.s4x-card'));
+    cards.forEach(function (card, i) {
+      card.addEventListener('click', function () {
+        if (!cmq.matches) return;
+        var pad = parseFloat(getComputedStyle(grid).scrollPaddingLeft) || 0;
+        var atSnap = Math.abs(card.getBoundingClientRect().left - grid.getBoundingClientRect().left - pad) < 24;
+        var target = atSnap ? cards[(i + 1) % cards.length] : card;
+        target.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      });
+    });
+  })();
 
   /* S6 패럴랙스 */
   var pars = document.querySelectorAll('.wcard .par');
